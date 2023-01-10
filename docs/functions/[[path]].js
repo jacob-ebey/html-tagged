@@ -1,22 +1,10 @@
 import { renderToString } from "html-tagged";
 import { createTrie, matchTrie } from "router-trie";
 
-import * as rootModule from "../routes/root.js";
-import * as homeModule from "../routes/home.js";
+import elements from "../elements/index.js";
+import routes from "../routes/index.js";
 
-const routerTrie = createTrie([
-  {
-    id: "root",
-    module: rootModule,
-    children: [
-      {
-        id: "home",
-        index: true,
-        module: homeModule,
-      },
-    ],
-  },
-]);
+const routerTrie = createTrie(routes);
 
 export async function onRequest(context) {
   /** @type {Request} */
@@ -38,7 +26,7 @@ export async function onRequest(context) {
   }
 
   /** @type {import("html-tagged/lib/html").HTMLNode} */
-  let lastRendered = null;
+  let lastNode = null;
   for (let i = matches.length - 1; i >= 0; i--) {
     const match = matches[i];
 
@@ -54,32 +42,18 @@ export async function onRequest(context) {
 
     const htmlNode = RouteComponent({ data });
 
-    if (lastRendered) {
-      let slotStart = -1;
-      let slotEnd = -1;
-      for (let i = 0; i < htmlNode.__chunks.length; i++) {
-        const chunk = htmlNode.__chunks[i];
-        if (typeof chunk === "object" && chunk.tagName === "slot") {
-          if (chunk.closeTag) {
-            slotEnd = i;
-            break;
-          } else {
-            slotStart = i;
-          }
-        }
-      }
-      if (slotStart !== -1 && slotEnd !== -1) {
-        htmlNode.__chunks.splice(
-          slotStart,
-          slotEnd - slotStart + 1,
-          lastRendered
-        );
+    if (lastNode) {
+      let slotIndex = htmlNode.__chunks.findIndex(
+        (n) => typeof n === "object" && n.tagName === "slot"
+      );
+      if (slotIndex !== -1) {
+        htmlNode.__chunks.splice(slotIndex, 2, ...lastNode.__chunks);
       }
     }
-    lastRendered = renderToString(htmlNode);
+    lastNode = htmlNode;
   }
 
-  return new Response(lastRendered, {
+  return new Response(renderToString(lastNode, { elements }), {
     headers: {
       "Content-Type": "text/html",
     },
