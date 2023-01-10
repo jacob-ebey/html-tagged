@@ -1,6 +1,14 @@
 import { html } from "html-tagged";
 
-export default function Home() {
+export async function data() {
+  const readme = await fetch(
+    "https://github-md.com/jacob-ebey/html-tagged/main/README.md"
+  ).then((res) => res.json());
+
+  return { readme };
+}
+
+export default function Home({ data }) {
   return html`
     <main>
       <header>
@@ -26,6 +34,8 @@ export default function Home() {
           </footer>
         </blockquote>
       </section>
+
+      <article>${data.readme.html}</article>
     </main>
   `;
 }

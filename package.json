@@ -6,6 +6,7 @@
     "html-tagged"
   ],
   "scripts": {
+    "dev": "turbo run dev",
     "bench": "turbo run bench",
     "test": "turbo run test",
     "release": "changeset publish",

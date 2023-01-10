@@ -29,6 +29,14 @@ export async function onRequest(context) {
     return await context.next();
   }
 
+  const matchesData = new Map();
+  for (const match of matches) {
+    if (match.module && match.module.data) {
+      const dataPromise = Promise.resolve(match.module.data({ request }));
+      matchesData.set(match.id, dataPromise);
+    }
+  }
+
   /** @type {import("html-tagged/lib/html").HTMLNode} */
   let lastRendered = null;
   for (let i = matches.length - 1; i >= 0; i--) {
@@ -38,7 +46,13 @@ export async function onRequest(context) {
     const RouteComponent = match.module.default;
     if (!RouteComponent) continue;
 
-    const htmlNode = RouteComponent();
+    const dataPromise = matchesData.get(match.id);
+    let data = undefined;
+    if (dataPromise) {
+      data = await dataPromise;
+    }
+
+    const htmlNode = RouteComponent({ data });
 
     if (lastRendered) {
       let slotStart = -1;
