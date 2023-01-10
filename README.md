@@ -31,7 +31,16 @@ will output:
 
 The performance mainly comes from the fact this library does not fully parse the input HTML, but instead parses just what's needed for the functionality this library provides. This means that the library is not a full HTML parser, and it will not be able to parse HTML that is not valid for the functionality this library provides.
 
+For a basic "hello world" page:
+
 | Library      | Ops/sec |
 | ------------ | ------- |
 | @enhance/ssr | 64867   |
 | html-tagged  | 233418  |
+
+For the Oven-sh's Bun HUGE README (7630 lines):
+
+| Library      | Ops/sec |
+| ------------ | ------- |
+| @enhance/ssr | 47      |
+| html-tagged  | 284     |
