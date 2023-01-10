@@ -4,6 +4,9 @@
     "bench": {
       "cache": false
     },
+    "dev": {
+      "cache": false
+    },
     "test": {
       "inputs": ["lib/**/*.js", "test/**/*.js"]
     }
