@@ -1,0 +1,2 @@
+/img/*
+  Cache-Control: public, max-age=600, s-maxage=600

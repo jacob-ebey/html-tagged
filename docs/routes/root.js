@@ -7,10 +7,18 @@ export default function Root() {
       <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="stylesheet" href="https://unpkg.com/mvp.css@1.12/mvp.css" />
         <title>html-tagged</title>
       </head>
       <body>
-        <h1>Root</h1>
+        <header>
+          <nav>
+            <h1>html-tagged</h1>
+            <ul>
+              <li>Home</li>
+            </ul>
+          </nav>
+        </header>
         <slot></slot>
       </body>
     </html>

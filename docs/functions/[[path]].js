@@ -18,7 +18,7 @@ const routerTrie = createTrie([
   },
 ]);
 
-export function onRequest(context) {
+export async function onRequest(context) {
   /** @type {Request} */
   const request = context.request;
   const url = new URL(request.url);
@@ -26,7 +26,7 @@ export function onRequest(context) {
   const matches = matchTrie(routerTrie, url.pathname);
 
   if (!matches) {
-    return new Response("Not found", { status: 404 });
+    return await context.next();
   }
 
   /** @type {import("html-tagged/lib/html").HTMLNode} */
