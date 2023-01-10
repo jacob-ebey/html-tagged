@@ -17,3 +17,7 @@ export function html(
   strings: TemplateStringsArray,
   ...values: string | number | boolean | HTMLNode[]
 ): HTMLNode;
+
+export function attr(value: string | number, preserveCR?: boolean): string;
+
+export function value(unsafe: string): string;

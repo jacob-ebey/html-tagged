@@ -1,7 +1,7 @@
 import * as assert from "node:assert";
 import { describe, it } from "node:test";
 
-import { html, renderToString } from "../lib/index.js";
+import { html, renderToString, value } from "../lib/index.js";
 
 describe("renderToString", () => {
   it("should render a simple string", () => {
@@ -60,6 +60,25 @@ describe("renderToString", () => {
     assert.strictEqual(
       result,
       "<div>\n        <custom-element><div>custom element <span>a</span></div></custom-element>\n      </div>"
+    );
+  });
+
+  it("should pass attrs to custom-element", () => {
+    const result = renderToString(
+      html`<div>
+        <custom-element name="test"><span>a</span></custom-element>
+      </div>`,
+      {
+        elements: {
+          "custom-element": ({ attrs }) =>
+            html`<div>custom element ${value(attrs.name)} <slot></slot></div>`,
+        },
+      }
+    );
+    console.log(JSON.stringify(result));
+    assert.strictEqual(
+      result,
+      '<div>\n        <custom-element name="test"><div>custom element test <span>a</span></div></custom-element>\n      </div>'
     );
   });
 

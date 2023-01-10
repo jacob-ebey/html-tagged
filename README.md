@@ -5,13 +5,16 @@ A SSR template library that expands custom elements. Inspired by [@enhance/ssr](
 ## Usage
 
 ```js
-import { html, renderToString } from "html-tagged";
+import { attr, html, renderToString } from "html-tagged";
 
 const elements = {
-  "my-element": () => html`<div class="my-element"><slot></slot></div>`,
+  "my-element": ({ attrs }) =>
+    html`<div class="my-element" data-name=${attr(attrs.name)}>
+      <slot></slot>
+    </div>`,
 };
 
-const template = html`<my-element>Hello World!</my-element>`;
+const template = html`<my-element name="test">Hello World!</my-element>`;
 const htmlString = renderToString(template, { elements });
 console.log(htmlString);
 ```
@@ -19,7 +22,9 @@ console.log(htmlString);
 will output:
 
 ```html
-<my-element><div class="my-element">Hello World!</div></my-element>
+<my-element name="test">
+  <div class="my-element" data-name="test">Hello World!</div>
+</my-element>
 ```
 
 ## Performance

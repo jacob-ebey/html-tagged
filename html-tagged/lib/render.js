@@ -8,7 +8,6 @@ export function renderToString(node, args) {
   let head = "";
   let foundBody = false;
   let body = "";
-  // TODO: dedupe scripts and styles
   const scriptCache = new Set();
   const styleCache = new Set();
   for (let i = 0; i < node.__chunks.length; i++) {
