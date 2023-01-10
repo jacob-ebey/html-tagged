@@ -1,7 +1,7 @@
 import * as assert from "node:assert";
 import { describe, it } from "node:test";
 
-import { html } from "./html.js";
+import { html } from "../lib/index.js";
 
 describe("html", () => {
   it("should return an object with an __html property", () => {
@@ -48,6 +48,94 @@ describe("html", () => {
     it("should allow HTMLNode", () => {
       const result = html`<div>${html`<span></span>`}</div>`;
       assert.strictEqual(result.__html, "<div><span></span></div>");
+    });
+  });
+
+  describe("scripts", () => {
+    it("are found and parsed for bubbling during render", () => {
+      const result = html`<script>
+        console.log("Hello, World!");
+      </script>`;
+      assert.deepStrictEqual(result.__chunks, [
+        { tagName: "script", attrs: undefined },
+        '\n        console.log("Hello, World!");\n      ',
+        { tagName: "script", closeTag: true },
+      ]);
+    });
+
+    it("nested are found and parsed for bubbling during render", () => {
+      const result = html`<script>
+          console.log("a");
+        </script>
+        ${html`<script>
+          console.log("b");
+        </script>`}`;
+
+      assert.deepStrictEqual(result.__chunks, [
+        { tagName: "script", attrs: undefined },
+        '\n          console.log("a");\n        ',
+        { tagName: "script", closeTag: true },
+        "\n        ",
+        { tagName: "script", attrs: undefined },
+        '\n          console.log("b");\n        ',
+        { tagName: "script", closeTag: true },
+      ]);
+    });
+  });
+
+  // duplicate of scripts tests for styles
+  describe("styles", () => {
+    it("are found and parsed for bubbling during render", () => {
+      const result = html`<style>
+        body {
+          background-color: red;
+        }
+      </style>`;
+      assert.deepStrictEqual(result.__chunks, [
+        {
+          tagName: "style",
+          attrs: undefined,
+        },
+        "\n        body {\n          background-color: red;\n        }\n      ",
+        {
+          tagName: "style",
+          closeTag: true,
+        },
+      ]);
+    });
+
+    it("nested are found and parsed for bubbling during render", () => {
+      const result = html`<style>
+          body {
+            background-color: red;
+          }
+        </style>
+        ${html`<style>
+          body {
+            color: green;
+          }
+        </style>`}`;
+      assert.deepStrictEqual(result.__chunks, [
+        {
+          tagName: "style",
+          attrs: undefined,
+        },
+        "\n          body {\n            background-color: red;\n          }\n        ",
+        {
+          tagName: "style",
+          closeTag: true,
+        },
+        "\n        ",
+        {
+          tagName: "style",
+          attrs: undefined,
+        },
+        "\n          body {\n            color: green;\n          }\n        ",
+        {
+          tagName: "style",
+          closeTag: true,
+        },
+      ]);
     });
   });
 

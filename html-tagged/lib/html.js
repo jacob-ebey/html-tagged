@@ -5,22 +5,12 @@
 
 const customElementRegex =
   /^[a-z](?:[\.0-9_a-z\xB7\xC0-\xD6\xD8-\xF6\xF8-\u037D\u037F-\u1FFF\u200C\u200D\u203F\u2040\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD]|[\uD800-\uDB7F][\uDC00-\uDFFF])*-(?:[\x2D\.0-9_a-z\xB7\xC0-\xD6\xD8-\xF6\xF8-\u037D\u037F-\u1FFF\u200C\u200D\u203F\u2040\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD]|[\uD800-\uDB7F][\uDC00-\uDFFF])*$/;
-const reservedTags = [
-  "annotation-xml",
-  "color-profile",
-  "font-face",
-  "font-face-src",
-  "font-face-uri",
-  "font-face-format",
-  "font-face-name",
-  "missing-glyph",
-];
+
+const domParserTokenizer =
+  /(?:<(\/?)([a-zA-Z][a-zA-Z0-9\:\-]*)(?:\s([^>]*?))?((?:\s*\/)?)>)/gm;
 
 /** @type {import("./html").html} */
 export function html(template, ...args) {
-  const domParserTokenizer =
-    /(?:<(\/?)([a-zA-Z][a-zA-Z0-9\:\-]*)(?:\s([^>]*?))?((?:\s*\/)?)>)/gm;
-
   let result = "";
   const final = template.length - 1;
   for (let i = 0; i < final; i++) {
@@ -46,29 +36,39 @@ export function html(template, ...args) {
   }
   result += template[final];
 
-  /** @type {Array<string | HTMLNode>} */
+  /** @type {Array<string | HTMLTag>} */
   const chunks = [];
   let token;
   let lastIndex = 0;
+  let sub = "";
   while ((token = domParserTokenizer.exec(result))) {
     const closeTag = token[1] === "/";
-    const tagName = token[2];
-    if (tagName === "slot" || isCustomElement(tagName)) {
+    let tagName = token[2].toLocaleLowerCase();
+
+    if (
+      (isCustomElement(token[2]) && (tagName = token[2])) ||
+      tagName === "html" ||
+      tagName === "head" ||
+      tagName === "body" ||
+      tagName === "style" ||
+      tagName === "script" ||
+      tagName === "slot"
+    ) {
+      sub = result.substring(lastIndex, token.index);
+      sub && chunks.push(sub);
       if (closeTag) {
-        chunks.push(result.substring(lastIndex, token.index));
         chunks.push({ tagName, closeTag: true });
-        lastIndex = token.index + token[0].length;
       } else {
-        chunks.push(result.substring(lastIndex, token.index));
         chunks.push({
           tagName,
           attrs: token[3],
         });
-        lastIndex = token.index + token[0].length;
       }
+      lastIndex = token.index + token[0].length;
     }
   }
-  chunks.push(result.substring(lastIndex));
+  sub = result.substring(lastIndex);
+  sub && chunks.push(sub);
 
   return { __html: result, __chunks: chunks };
 }
@@ -77,7 +77,16 @@ export function html(template, ...args) {
  * @param {string} tagName
  */
 function notReservedTag(tagName) {
-  return reservedTags.indexOf(tagName) === -1;
+  return (
+    tagName !== "annotation-xml" &&
+    tagName !== "color-profile" &&
+    tagName !== "font-face" &&
+    tagName !== "font-face-src" &&
+    tagName !== "font-face-uri" &&
+    tagName !== "font-face-format" &&
+    tagName !== "font-face-name" &&
+    tagName !== "missing-glyph"
+  );
 }
 
 /**

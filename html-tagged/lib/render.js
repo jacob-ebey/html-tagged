@@ -4,6 +4,13 @@ export function renderToString(node, args) {
   const customElements = args.elements || {};
 
   let result = "";
+  let headIndex = -1;
+  let head = "";
+  let foundBody = false;
+  let body = "";
+  // TODO: dedupe scripts and styles
+  const scriptCache = new Set();
+  const styleCache = new Set();
   for (let i = 0; i < node.__chunks.length; i++) {
     const chunk = node.__chunks[i];
 
@@ -12,6 +19,33 @@ export function renderToString(node, args) {
         result += chunk;
         break;
       case "object":
+        if (
+          !chunk.closeTag &&
+          ((chunk.tagName === "script" && foundBody) ||
+            (chunk.tagName === "style" && headIndex !== -1))
+        ) {
+          let collected = `<${chunk.tagName}`;
+          if (chunk.attrs) collected += ` ${chunk.attrs}`;
+          collected += ">";
+          collected += node.__chunks[++i];
+          collected += `</${chunk.tagName}>`;
+          ++i;
+
+          switch (chunk.tagName) {
+            case "script":
+              if (scriptCache.has(collected)) continue;
+              scriptCache.add(collected);
+              body += collected;
+              break;
+            case "style":
+              if (styleCache.has(collected)) continue;
+              styleCache.add(collected);
+              head += collected;
+              break;
+          }
+          continue;
+        }
+
         if (chunk.tagName === "slot") {
           if (chunk.closeTag) break;
 
@@ -23,14 +57,22 @@ export function renderToString(node, args) {
         }
 
         if (chunk.closeTag) {
+          if (chunk.tagName === "head") {
+            headIndex = result.length;
+          } else if (chunk.tagName === "body") {
+            foundBody = false;
+            result += body;
+          }
           result += `</${chunk.tagName}>`;
         } else {
+          if (chunk.tagName === "body") {
+            foundBody = true;
+          }
           result += `<${chunk.tagName}`;
           if (chunk.attrs) result += ` ${chunk.attrs}`;
           result += ">";
 
           const CustomElement = customElements[chunk.tagName];
-
           if (!CustomElement) {
             break;
           }
@@ -60,6 +102,9 @@ export function renderToString(node, args) {
         }
         break;
     }
+  }
+  if (headIndex !== -1 && head) {
+    result = result.slice(0, headIndex) + head + result.slice(headIndex);
   }
   return result;
 }

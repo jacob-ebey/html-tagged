@@ -1,0 +1,11 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "pipeline": {
+    "bench": {
+      "cache": false
+    },
+    "test": {
+      "inputs": ["lib/**/*.js", "test/**/*.js"]
+    }
+  }
+}
