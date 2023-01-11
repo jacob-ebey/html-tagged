@@ -1,4 +1,27 @@
 import { html } from "html-tagged";
+
+export async function data() {
+  /**
+   * @type {{
+   *  attributes: Record<string, unknown>;
+   *  html: string
+   * }}
+   **/
+  const readme = await fetch(
+    "https://github-md.com/jacob-ebey/html-tagged/main/README.md",
+    {
+      cf: {
+        cacheTtlByStatus: {
+          // 5 minutes
+          200: 1 * 60 * 5,
+        },
+      },
+    }
+  ).then((res) => res.json());
+
+  return { readme };
+}
+
 /**
  *
  * @param {{ data: Awaited<ReturnType<typeof data>> }} args
@@ -6,22 +29,9 @@ import { html } from "html-tagged";
  */
 export default function Docs({ data }) {
   return html`
-      <div role="navigation" aria-label="Docs Navigation">
-        <ul class="docs-nav">
-          <li><a href="/docs">Docs Home</a></li>
-          <li><a href="/docs">Docs Home</a></li>
-        </ul>
-      </div>
     </header>
     <main>
-      <slot></slot>
+      <article>${data.readme.html}</article>
     </main>
-
-    <style>
-      .docs-nav {
-        list-style-type: none;
-        border: 1px solid var(--color-secondary);
-      }
-    </style>
   `;
 }
