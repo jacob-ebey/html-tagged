@@ -1,15 +1,31 @@
+/**
+ * @typedef {{
+ *  root: import("./html").HtmlNode;
+ *  headIndex: number;
+ *  head: string;
+ *  foundBody: boolean;
+ *  body: string;
+ *  scriptCache: Set<string>;
+ *  styleCache: Set<string>;
+ * }} RenderToStringContext
+ */
+
 /** @type {import("./render").renderToString} */
 export function renderToString(node, args) {
   args = args || {};
   const customElements = args.elements || {};
 
   let result = "";
-  let headIndex = -1;
-  let head = "";
-  let foundBody = false;
-  let body = "";
-  const scriptCache = new Set();
-  const styleCache = new Set();
+  /** @type {RenderToStringContext} */
+  const ctx = this || {
+    root: node,
+    headIndex: -1,
+    head: "",
+    foundBody: false,
+    body: "",
+    scriptCache: new Set(),
+    styleCache: new Set(),
+  };
   for (let i = 0; i < node.__chunks.length; i++) {
     const chunk = node.__chunks[i];
 
@@ -20,8 +36,8 @@ export function renderToString(node, args) {
       case "object":
         if (
           !chunk.closeTag &&
-          ((chunk.tagName === "script" && foundBody) ||
-            (chunk.tagName === "style" && headIndex !== -1))
+          ((chunk.tagName === "script" && ctx.foundBody) ||
+            (chunk.tagName === "style" && ctx.headIndex !== -1))
         ) {
           let collected = `<${chunk.tagName}`;
           if (chunk.attrs) collected += ` ${chunk.attrs}`;
@@ -32,14 +48,14 @@ export function renderToString(node, args) {
 
           switch (chunk.tagName) {
             case "script":
-              if (scriptCache.has(collected)) continue;
-              scriptCache.add(collected);
-              body += collected;
+              if (ctx.scriptCache.has(collected)) continue;
+              ctx.scriptCache.add(collected);
+              ctx.body += collected;
               break;
             case "style":
-              if (styleCache.has(collected)) continue;
-              styleCache.add(collected);
-              head += collected;
+              if (ctx.styleCache.has(collected)) continue;
+              ctx.styleCache.add(collected);
+              ctx.head += collected;
               break;
           }
           continue;
@@ -48,7 +64,8 @@ export function renderToString(node, args) {
         if (chunk.tagName === "slot") {
           if (chunk.closeTag) break;
 
-          result += renderToString(
+          result += renderToString.call(
+            ctx,
             { __chunks: args.__slot || [] },
             { ...args, __slot: undefined }
           );
@@ -56,16 +73,20 @@ export function renderToString(node, args) {
         }
 
         if (chunk.closeTag) {
-          if (chunk.tagName === "head") {
-            headIndex = result.length;
-          } else if (chunk.tagName === "body") {
-            foundBody = false;
-            result += body;
+          if (
+            chunk.tagName === "head" &&
+            ctx.headIndex === -1 &&
+            ctx.root === node
+          ) {
+            ctx.headIndex = result.length;
+          } else if (chunk.tagName === "body" && ctx.root === node) {
+            ctx.foundBody = false;
+            result += ctx.body;
           }
           result += `</${chunk.tagName}>`;
         } else {
           if (chunk.tagName === "body") {
-            foundBody = true;
+            ctx.foundBody = true;
           }
           result += `<${chunk.tagName}`;
           if (chunk.attrs) result += ` ${chunk.attrs}`;
@@ -93,7 +114,7 @@ export function renderToString(node, args) {
             const customElementNode = CustomElement({
               attrs: parseAttributes(chunk.attrs),
             });
-            result += renderToString(customElementNode, {
+            result += renderToString.call(ctx, customElementNode, {
               ...args,
               __slot: slotChunks,
             });
@@ -102,8 +123,9 @@ export function renderToString(node, args) {
         break;
     }
   }
-  if (headIndex !== -1 && head) {
-    result = result.slice(0, headIndex) + head + result.slice(headIndex);
+  if (ctx.root === node && ctx.headIndex !== -1 && ctx.head) {
+    result =
+      result.slice(0, ctx.headIndex) + ctx.head + result.slice(ctx.headIndex);
   }
   return result;
 }
