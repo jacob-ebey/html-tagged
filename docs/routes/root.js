@@ -1,6 +1,6 @@
 import { html } from "html-tagged";
 
-import mvpcss from "./mvp.css.js";
+import mvpcss from "../styles/mvp.css.js";
 
 export default function Root() {
   return html`
@@ -17,11 +17,18 @@ export default function Root() {
           <nav>
             <h1>html-tagged</h1>
             <ul>
-              <li>Home</li>
+              <li>
+                <a href="/">Home</a>
+              </li>
+              <li>
+                <a href="/docs">Docs</a>
+              </li>
             </ul>
           </nav>
-        </header>
-        <slot></slot>
+          <slot></slot>
+        
+
+        <client-navigation></client-navigation>
       </body>
     </html>
   `;
