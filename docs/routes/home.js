@@ -1,7 +1,7 @@
 import { html } from "html-tagged";
 
 export default function Home({ data }) {
-  return html`
+	return html`
       <h1>
         Minimal HTML templates with custom element expansion for the modern
         web.

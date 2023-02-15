@@ -3,7 +3,7 @@ import { html } from "html-tagged";
 import mvpcss from "../styles/mvp.css.js";
 
 export default function Root() {
-  return html`
+	return html`
     <!DOCTYPE html>
     <html lang="en-us">
       <head>

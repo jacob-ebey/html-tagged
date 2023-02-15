@@ -1,5 +1,5 @@
 {
-  "version": 1,
-  "include": ["/*"],
-  "exclude": ["/*.svg"]
+	"version": 1,
+	"include": ["/", "/docs"],
+	"exclude": ["/img/*.svg"]
 }

@@ -1,5 +1,5 @@
 import ClientNavigation from "./client-navigation";
 
 export default {
-  "client-navigation": ClientNavigation,
+	"client-navigation": ClientNavigation,
 };

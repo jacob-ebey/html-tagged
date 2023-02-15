@@ -1,14 +1,14 @@
 {
-  "$schema": "https://turbo.build/schema.json",
-  "pipeline": {
-    "bench": {
-      "cache": false
-    },
-    "dev": {
-      "cache": false
-    },
-    "test": {
-      "inputs": ["lib/**/*.js", "test/**/*.js"]
-    }
-  }
+	"$schema": "https://turbo.build/schema.json",
+	"pipeline": {
+		"bench": {
+			"cache": false
+		},
+		"dev": {
+			"cache": false
+		},
+		"test": {
+			"inputs": ["lib/**/*.js", "test/**/*.js"]
+		}
+	}
 }

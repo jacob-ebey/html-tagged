@@ -1,15 +1,15 @@
 {
-  "name": "html-tagged",
-  "version": "0.0.2",
-  "type": "module",
-  "files": [
-    "lib/"
-  ],
-  "main": "lib/index.js",
-  "scripts": {
-    "test": "node --test"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC"
+	"name": "html-tagged",
+	"version": "0.0.2",
+	"type": "module",
+	"files": [
+		"lib/"
+	],
+	"main": "lib/index.js",
+	"scripts": {
+		"test": "node --test"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC"
 }
