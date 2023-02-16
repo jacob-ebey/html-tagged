@@ -4,7 +4,9 @@ import * as path from "node:path";
 export * from "node:assert";
 
 const snapshotsDir = path.join(process.cwd(), ".snapshots");
-fs.rmdirSync(snapshotsDir, { recursive: true });
+if (fs.existsSync(snapshotsDir)) {
+	fs.rmdirSync(snapshotsDir, { recursive: true });
+}
 fs.mkdirSync(snapshotsDir, { recursive: true });
 
 export function inlineSnapshot(expected, actual) {
