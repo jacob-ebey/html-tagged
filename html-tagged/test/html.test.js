@@ -56,7 +56,12 @@ describe("html", () => {
 			const result = html`<div>
 				${["a", 1, true, false, null, undefined, html`<span>2</span>`]}
 			</div>`;
-			inlineSnapshot(result.__html, "<div>a1true<span>2</span></div>");
+			inlineSnapshot(
+				result.__html,
+				`<div>
+				a1true<span>2</span>
+			</div>`
+			);
 		});
 	});
 
