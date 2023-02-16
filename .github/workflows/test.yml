@@ -2,11 +2,11 @@ name: Test
 
 on: [push]
 
-concurrency: ${{ github.workflow }}-${{ github.ref }}
+concurrency: test-${{ github.workflow }}-${{ github.ref }}
 
 jobs:
-  release:
-    name: Release
+  test:
+    name: Test
     runs-on: ubuntu-latest
     steps:
       - name: Checkout 🛎️
