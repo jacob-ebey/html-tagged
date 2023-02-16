@@ -1,5 +1,11 @@
 # html-tagged
 
+## 0.0.3
+
+### Patch Changes
+
+- [`575c24c`](https://github.com/jacob-ebey/html-tagged/commit/575c24c6c7ac4ae540043bca9169af63b18e8924) Thanks [@jacob-ebey](https://github.com/jacob-ebey)! - Added types and support for array values
+
 ## 0.0.2
 
 ### Patch Changes
