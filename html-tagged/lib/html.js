@@ -45,24 +45,27 @@ export function html(template, ...args) {
 	let result = "";
 	const final = template.length - 1;
 	for (let i = 0; i < final; i++) {
-		let arg = args[i];
 		result += template[i];
-		switch (typeof arg) {
-			case "string":
-				result += arg;
-				break;
-			case "number":
-				result += String(arg);
-				break;
-			case "boolean":
-				result += arg ? "true" : "";
-				break;
-			case "object":
-				if (!arg) break;
-				if (typeof arg.__html === "string") {
-					result += arg.__html;
-				}
-				break;
+		let argArray = Array.isArray(args[i]) ? args[i] : [args[i]];
+
+		for (const arg of argArray) {
+			switch (typeof arg) {
+				case "string":
+					result += arg;
+					break;
+				case "number":
+					result += String(arg);
+					break;
+				case "boolean":
+					result += arg ? "true" : "";
+					break;
+				case "object":
+					if (!arg) break;
+					if (typeof arg.__html === "string") {
+						result += arg.__html;
+					}
+					break;
+			}
 		}
 	}
 	result += template[final];

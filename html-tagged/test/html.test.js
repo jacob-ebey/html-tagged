@@ -51,6 +51,13 @@ describe("html", () => {
 			const result = html`<div>${html`<span></span>`}</div>`;
 			inlineSnapshot(result.__html, "<div><span></span></div>");
 		});
+
+		it("should allow array of mixed values", () => {
+			const result = html`<div>
+				${["a", 1, true, false, null, undefined, html`<span>2</span>`]}
+			</div>`;
+			inlineSnapshot(result.__html, "<div>a1true<span>2</span></div>");
+		});
 	});
 
 	describe("scripts", () => {
