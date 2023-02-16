@@ -3,17 +3,19 @@ import { describe, it } from "node:test";
 
 import { html, renderToString, value } from "../lib/index.js";
 
+import { inlineSnapshot } from "./assert.js";
+
 describe("renderToString", () => {
 	it("should render a simple string", () => {
 		const result = renderToString(html`<div></div>`);
-		assert.strictEqual(result, "<div></div>");
+		inlineSnapshot(result, "<div></div>");
 	});
 
 	it("should render custom element without implementation to string", () => {
 		const result = renderToString(
 			html`<div><custom-element></custom-element></div>`
 		);
-		assert.strictEqual(result, "<div><custom-element></custom-element></div>");
+		inlineSnapshot(result, "<div><custom-element></custom-element></div>");
 	});
 
 	it("should render nested custom elements without implementation to string", () => {
@@ -25,9 +27,14 @@ describe("renderToString", () => {
 				</custom-element-a>
 			</div>`
 		);
-		assert.strictEqual(
+		inlineSnapshot(
 			result,
-			"<div>\n        <custom-element-a>\n          a\n          <custom-element-b>b</custom-element-b>\n        </custom-element-a>\n      </div>"
+			`<div>
+				<custom-element-a>
+					a
+					<custom-element-b>b</custom-element-b>
+				</custom-element-a>
+			</div>`
 		);
 	});
 
@@ -40,7 +47,7 @@ describe("renderToString", () => {
 				},
 			}
 		);
-		assert.strictEqual(
+		inlineSnapshot(
 			result,
 			"<div><custom-element><div>custom element</div></custom-element></div>"
 		);
@@ -57,9 +64,11 @@ describe("renderToString", () => {
 				},
 			}
 		);
-		assert.strictEqual(
+		inlineSnapshot(
 			result,
-			"<div>\n        <custom-element><div>custom element <span>a</span></div></custom-element>\n      </div>"
+			`<div>
+				<custom-element><div>custom element <span>a</span></div></custom-element>
+			</div>`
 		);
 	});
 
@@ -76,9 +85,11 @@ describe("renderToString", () => {
 			}
 		);
 		console.log(JSON.stringify(result));
-		assert.strictEqual(
+		inlineSnapshot(
 			result,
-			'<div>\n        <custom-element name="test"><div>custom element test <span>a</span></div></custom-element>\n      </div>'
+			`<div>
+				<custom-element name="test"><div>custom element test <span>a</span></div></custom-element>
+			</div>`
 		);
 	});
 
@@ -98,9 +109,16 @@ describe("renderToString", () => {
 				},
 			}
 		);
-		assert.strictEqual(
+		inlineSnapshot(
 			result,
-			"<div>\n        <custom-element><div>custom element \n          <span>a</span>\n          <custom-element><div>custom element \n            <span>b</span>\n          </div></custom-element>\n        </div></custom-element>\n      </div>"
+			`<div>
+				<custom-element><div>custom element 
+					<span>a</span>
+					<custom-element><div>custom element 
+						<span>b</span>
+					</div></custom-element>
+				</div></custom-element>
+			</div>`
 		);
 	});
 
@@ -118,7 +136,7 @@ describe("renderToString", () => {
 				},
 			}
 		);
-		assert.strictEqual(
+		inlineSnapshot(
 			result,
 			"<div>\n        <custom-element-a>a<custom-element-b><div>b <span>outer</span></div></custom-element-b></custom-element-a>\n      </div>"
 		);
@@ -134,9 +152,14 @@ describe("renderToString", () => {
 						}
 					</style>`
 			);
-			assert.strictEqual(
+			inlineSnapshot(
 				result,
-				"<p>a</p>\n          <style>\n            html {\n              color: green;\n            }\n          </style>"
+				`<p>a</p>
+					<style>
+						html {
+							color: green;
+						}
+					</style>`
 			);
 		});
 
@@ -159,9 +182,24 @@ describe("renderToString", () => {
 						</body>
 					</html>`
 			);
-			assert.strictEqual(
+			inlineSnapshot(
 				result,
-				'<!DOCTYPE html>\n          <html>\n            <head><style>\n                  html {\n                    color: green;\n                  }\n                </style></head>\n            <body>\n              <div>\n                \n                \n              </div>\n            <script>\n                  console.log("hello");\n                </script></body>\n          </html>'
+				`<!DOCTYPE html>
+					<html>
+						<head><style>
+									html {
+										color: green;
+									}
+								</style></head>
+						<body>
+							<div>
+								
+								
+							</div>
+						<script>
+									console.log("hello");
+								</script></body>
+					</html>`
 			);
 		});
 
@@ -184,9 +222,24 @@ describe("renderToString", () => {
 						</body>
 					</html>`
 			);
-			assert.strictEqual(
+			inlineSnapshot(
 				result,
-				'<!DOCTYPE html>\n          <html>\n            <head><style>\n                  html {\n                    color: green;\n                  }\n                </style></head>\n            <body>\n              <div>\n                \n                \n              </div>\n            <script>\n                  console.log("hello");\n                </script></body>\n          </html>'
+				`<!DOCTYPE html>
+					<html>
+						<head><style>
+									html {
+										color: green;
+									}
+								</style></head>
+						<body>
+							<div>
+								
+								
+							</div>
+						<script>
+									console.log("hello");
+								</script></body>
+					</html>`
 			);
 		});
 
@@ -210,9 +263,24 @@ describe("renderToString", () => {
 						</body>
 					</html>`
 			);
-			assert.strictEqual(
+			inlineSnapshot(
 				result,
-				'<!DOCTYPE html>\n          <html>\n            <head><style>\n        html {\n          color: green;\n        }\n      </style></head>\n            <body>\n              <div>\n                 \n                \n              </div>\n            <script>\n                  console.log("hello");\n                </script></body>\n          </html>'
+				`<!DOCTYPE html>
+					<html>
+						<head><style>
+				html {
+					color: green;
+				}
+			</style></head>
+						<body>
+							<div>
+								 
+								
+							</div>
+						<script>
+									console.log("hello");
+								</script></body>
+					</html>`
 			);
 		});
 	});
@@ -225,9 +293,12 @@ describe("renderToString", () => {
 						console.log("hello");
 					</script>`
 			);
-			assert.strictEqual(
+			inlineSnapshot(
 				result,
-				'<p>a</p>\n          <script>\n            console.log("hello");\n          </script>'
+				`<p>a</p>
+					<script>
+						console.log("hello");
+					</script>`
 			);
 		});
 
@@ -240,9 +311,14 @@ describe("renderToString", () => {
 						console.log("b");
 					</script>`}`
 			);
-			assert.strictEqual(
+			inlineSnapshot(
 				result,
-				'<script>\n            console.log("a");\n          </script>\n          <script>\n            console.log("b");\n          </script>'
+				`<script>
+						console.log("a");
+					</script>
+					<script>
+						console.log("b");
+					</script>`
 			);
 		});
 
@@ -265,9 +341,24 @@ describe("renderToString", () => {
 						</body>
 					</html>`
 			);
-			assert.strictEqual(
+			inlineSnapshot(
 				result,
-				'<!DOCTYPE html>\n          <html>\n            <head><style>\n                  html {\n                    color: green;\n                  }\n                </style></head>\n            <body>\n              <div>\n                \n                \n              </div>\n            <script>\n                  console.log("hello");\n                </script></body>\n          </html>'
+				`<!DOCTYPE html>
+					<html>
+						<head><style>
+									html {
+										color: green;
+									}
+								</style></head>
+						<body>
+							<div>
+								
+								
+							</div>
+						<script>
+									console.log("hello");
+								</script></body>
+					</html>`
 			);
 		});
 
@@ -290,9 +381,24 @@ describe("renderToString", () => {
 						</body>
 					</html>`
 			);
-			assert.strictEqual(
+			inlineSnapshot(
 				result,
-				'<!DOCTYPE html>\n          <html>\n            <head><style>\n                  html {\n                    color: green;\n                  }\n                </style></head>\n            <body>\n              <div>\n                \n                \n              </div>\n            <script>\n                  console.log("hello");\n                </script></body>\n          </html>'
+				`<!DOCTYPE html>
+					<html>
+						<head><style>
+									html {
+										color: green;
+									}
+								</style></head>
+						<body>
+							<div>
+								
+								
+							</div>
+						<script>
+									console.log("hello");
+								</script></body>
+					</html>`
 			);
 		});
 
@@ -316,9 +422,24 @@ describe("renderToString", () => {
 						</body>
 					</html>`
 			);
-			assert.strictEqual(
+			inlineSnapshot(
 				result,
-				'<!DOCTYPE html>\n          <html>\n            <head><style>\n                  html {\n                    color: green;\n                  }\n                </style></head>\n            <body>\n              <div>\n                 \n                \n              </div>\n            <script>\n        console.log("hello");\n      </script></body>\n          </html>'
+				`<!DOCTYPE html>
+					<html>
+						<head><style>
+									html {
+										color: green;
+									}
+								</style></head>
+						<body>
+							<div>
+								 
+								
+							</div>
+						<script>
+				console.log("hello");
+			</script></body>
+					</html>`
 			);
 		});
 	});

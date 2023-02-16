@@ -3,51 +3,53 @@ import { describe, it } from "node:test";
 
 import { html } from "../lib/index.js";
 
+import { inlineSnapshot } from "./assert.js";
+
 describe("html", () => {
 	it("should return an object with an __html property", () => {
 		const result = html`<div></div>`;
-		assert.strictEqual(result.__html, "<div></div>");
+		inlineSnapshot(result.__html, "<div></div>");
 	});
 
 	describe("values", () => {
 		it("should allow string", () => {
 			const result = html`<div>${"a"}</div>`;
-			assert.strictEqual(result.__html, "<div>a</div>");
+			inlineSnapshot(result.__html, "<div>a</div>");
 		});
 
 		it("should allow integer", () => {
 			const result = html`<div>${1}</div>`;
-			assert.strictEqual(result.__html, "<div>1</div>");
+			inlineSnapshot(result.__html, "<div>1</div>");
 		});
 
 		it("should allow float", () => {
 			const result = html`<div>${0.999999999}</div>`;
-			assert.strictEqual(result.__html, "<div>0.999999999</div>");
+			inlineSnapshot(result.__html, "<div>0.999999999</div>");
 		});
 
 		it("should allow true", () => {
 			const result = html`<div>${true}</div>`;
-			assert.strictEqual(result.__html, "<div>true</div>");
+			inlineSnapshot(result.__html, "<div>true</div>");
 		});
 
 		it("should not print false", () => {
 			const result = html`<div>${false}</div>`;
-			assert.strictEqual(result.__html, "<div></div>");
+			inlineSnapshot(result.__html, "<div></div>");
 		});
 
 		it("should not print null", () => {
 			const result = html`<div>${null}</div>`;
-			assert.strictEqual(result.__html, "<div></div>");
+			inlineSnapshot(result.__html, "<div></div>");
 		});
 
 		it("should not print undefined", () => {
 			const result = html`<div>${undefined}</div>`;
-			assert.strictEqual(result.__html, "<div></div>");
+			inlineSnapshot(result.__html, "<div></div>");
 		});
 
 		it("should allow HTMLNode", () => {
 			const result = html`<div>${html`<span></span>`}</div>`;
-			assert.strictEqual(result.__html, "<div><span></span></div>");
+			inlineSnapshot(result.__html, "<div><span></span></div>");
 		});
 	});
 
@@ -56,11 +58,14 @@ describe("html", () => {
 			const result = html`<script>
 				console.log("Hello, World!");
 			</script>`;
-			assert.deepStrictEqual(result.__chunks, [
-				{ tagName: "script", attrs: undefined },
-				'\n        console.log("Hello, World!");\n      ',
-				{ tagName: "script", closeTag: true },
-			]);
+			inlineSnapshot(
+				JSON.stringify(result.__chunks),
+				JSON.stringify([
+					{ tagName: "script" },
+					'\n\t\t\t\tconsole.log("Hello, World!");\n\t\t\t',
+					{ tagName: "script", closeTag: true },
+				])
+			);
 		});
 
 		it("nested are found and parsed for bubbling during render", () => {
@@ -71,15 +76,18 @@ describe("html", () => {
 					console.log("b");
 				</script>`}`;
 
-			assert.deepStrictEqual(result.__chunks, [
-				{ tagName: "script", attrs: undefined },
-				'\n          console.log("a");\n        ',
-				{ tagName: "script", closeTag: true },
-				"\n        ",
-				{ tagName: "script", attrs: undefined },
-				'\n          console.log("b");\n        ',
-				{ tagName: "script", closeTag: true },
-			]);
+			inlineSnapshot(
+				JSON.stringify(result.__chunks),
+				JSON.stringify([
+					{ tagName: "script" },
+					'\n\t\t\t\t\tconsole.log("a");\n\t\t\t\t',
+					{ tagName: "script", closeTag: true },
+					"\n\t\t\t\t",
+					{ tagName: "script" },
+					'\n\t\t\t\t\tconsole.log("b");\n\t\t\t\t',
+					{ tagName: "script", closeTag: true },
+				])
+			);
 		});
 	});
 
@@ -91,17 +99,14 @@ describe("html", () => {
 					background-color: red;
 				}
 			</style>`;
-			assert.deepStrictEqual(result.__chunks, [
-				{
-					tagName: "style",
-					attrs: undefined,
-				},
-				"\n        body {\n          background-color: red;\n        }\n      ",
-				{
-					tagName: "style",
-					closeTag: true,
-				},
-			]);
+			inlineSnapshot(
+				JSON.stringify(result.__chunks),
+				JSON.stringify([
+					{ tagName: "style" },
+					"\n\t\t\t\tbody {\n\t\t\t\t\tbackground-color: red;\n\t\t\t\t}\n\t\t\t",
+					{ tagName: "style", closeTag: true },
+				])
+			);
 		});
 
 		it("nested are found and parsed for bubbling during render", () => {
@@ -115,27 +120,18 @@ describe("html", () => {
 						color: green;
 					}
 				</style>`}`;
-			assert.deepStrictEqual(result.__chunks, [
-				{
-					tagName: "style",
-					attrs: undefined,
-				},
-				"\n          body {\n            background-color: red;\n          }\n        ",
-				{
-					tagName: "style",
-					closeTag: true,
-				},
-				"\n        ",
-				{
-					tagName: "style",
-					attrs: undefined,
-				},
-				"\n          body {\n            color: green;\n          }\n        ",
-				{
-					tagName: "style",
-					closeTag: true,
-				},
-			]);
+			inlineSnapshot(
+				JSON.stringify(result.__chunks),
+				JSON.stringify([
+					{ tagName: "style" },
+					"\n\t\t\t\t\tbody {\n\t\t\t\t\t\tbackground-color: red;\n\t\t\t\t\t}\n\t\t\t\t",
+					{ tagName: "style", closeTag: true },
+					"\n\t\t\t\t",
+					{ tagName: "style" },
+					"\n\t\t\t\t\tbody {\n\t\t\t\t\t\tcolor: green;\n\t\t\t\t\t}\n\t\t\t\t",
+					{ tagName: "style", closeTag: true },
+				])
+			);
 		});
 	});
 
@@ -144,17 +140,22 @@ describe("html", () => {
 			const result = html`<div>
 				<custom-element name="value">a</custom-element>
 			</div>`;
-			assert.strictEqual(
+			inlineSnapshot(
 				result.__html,
-				'<div>\n        <custom-element name="value">a</custom-element>\n      </div>'
+				`<div>
+				<custom-element name="value">a</custom-element>
+			</div>`
 			);
-			assert.deepStrictEqual(result.__chunks, [
-				"<div>\n        ",
-				{ tagName: "custom-element", attrs: 'name="value"' },
-				"a",
-				{ tagName: "custom-element", closeTag: true },
-				"\n      </div>",
-			]);
+			inlineSnapshot(
+				JSON.stringify(result.__chunks),
+				JSON.stringify([
+					"<div>\n\t\t\t\t",
+					{ tagName: "custom-element", attrs: 'name="value"' },
+					"a",
+					{ tagName: "custom-element", closeTag: true },
+					"\n\t\t\t</div>",
+				])
+			);
 		});
 
 		it("nested are found and parsed for expansion during render", () => {
@@ -164,21 +165,29 @@ describe("html", () => {
 					<custom-element-b name="value">b</custom-element-b>
 				</custom-element-a>
 			</div>`;
-			assert.strictEqual(
+			inlineSnapshot(
 				result.__html,
-				'<div>\n        <custom-element-a name="value">\n          a\n          <custom-element-b name="value">b</custom-element-b>\n        </custom-element-a>\n      </div>'
+				`<div>
+				<custom-element-a name="value">
+					a
+					<custom-element-b name="value">b</custom-element-b>
+				</custom-element-a>
+			</div>`
 			);
-			assert.deepStrictEqual(result.__chunks, [
-				"<div>\n        ",
-				{ tagName: "custom-element-a", attrs: 'name="value"' },
-				"\n          a\n          ",
-				{ tagName: "custom-element-b", attrs: 'name="value"' },
-				"b",
-				{ tagName: "custom-element-b", closeTag: true },
-				"\n        ",
-				{ tagName: "custom-element-a", closeTag: true },
-				"\n      </div>",
-			]);
+			inlineSnapshot(
+				JSON.stringify(result.__chunks),
+				JSON.stringify([
+					"<div>\n\t\t\t\t",
+					{ tagName: "custom-element-a", attrs: 'name="value"' },
+					"\n\t\t\t\t\ta\n\t\t\t\t\t",
+					{ tagName: "custom-element-b", attrs: 'name="value"' },
+					"b",
+					{ tagName: "custom-element-b", closeTag: true },
+					"\n\t\t\t\t",
+					{ tagName: "custom-element-a", closeTag: true },
+					"\n\t\t\t</div>",
+				])
+			);
 		});
 
 		it("nested are found in nested HTMLNode", () => {
@@ -187,21 +196,28 @@ describe("html", () => {
 					a ${html`<custom-element-b name="value">b</custom-element-b>`}
 				</custom-element-a>
 			</div>`;
-			assert.strictEqual(
+			inlineSnapshot(
 				result.__html,
-				'<div>\n        <custom-element-a name="value">\n          a <custom-element-b name="value">b</custom-element-b>\n        </custom-element-a>\n      </div>'
+				`<div>
+				<custom-element-a name="value">
+					a <custom-element-b name="value">b</custom-element-b>
+				</custom-element-a>
+			</div>`
 			);
-			assert.deepStrictEqual(result.__chunks, [
-				"<div>\n        ",
-				{ tagName: "custom-element-a", attrs: 'name="value"' },
-				"\n          a ",
-				{ tagName: "custom-element-b", attrs: 'name="value"' },
-				"b",
-				{ tagName: "custom-element-b", closeTag: true },
-				"\n        ",
-				{ tagName: "custom-element-a", closeTag: true },
-				"\n      </div>",
-			]);
+			inlineSnapshot(
+				JSON.stringify(result.__chunks),
+				JSON.stringify([
+					"<div>\n\t\t\t\t",
+					{ tagName: "custom-element-a", attrs: 'name="value"' },
+					"\n\t\t\t\t\ta ",
+					{ tagName: "custom-element-b", attrs: 'name="value"' },
+					"b",
+					{ tagName: "custom-element-b", closeTag: true },
+					"\n\t\t\t\t",
+					{ tagName: "custom-element-a", closeTag: true },
+					"\n\t\t\t</div>",
+				])
+			);
 		});
 	});
 });
