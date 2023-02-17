@@ -1,4 +1,4 @@
-import { type HTMLNode } from "./html";
+import { type HTMLNode, type HTMLTag } from "./html.js";
 
 export interface CustomElementArgs<
 	Attrs extends Record<string, string> = Record<string, string>

@@ -1,8 +1,6 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
 
-export * from "node:assert";
-
 const snapshotsDir = path.join(process.cwd(), ".snapshots");
 fs.mkdirSync(snapshotsDir, { recursive: true });
 

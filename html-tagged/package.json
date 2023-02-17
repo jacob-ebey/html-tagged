@@ -8,9 +8,13 @@
 	"main": "lib/index.js",
 	"types": "lib/index.d.ts",
 	"scripts": {
-		"test": "node --test"
+		"test": "node --test",
+		"typecheck": "tsc --noEmit"
 	},
 	"keywords": [],
 	"author": "",
-	"license": "ISC"
+	"license": "ISC",
+	"devDependencies": {
+		"@types/node": "^18.13.0"
+	}
 }

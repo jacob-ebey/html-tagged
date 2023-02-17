@@ -17,7 +17,7 @@ type ValueType = string | number | boolean | HTMLNode;
 
 export function html(
 	strings: TemplateStringsArray,
-	...values: ValueType | HTMLNode[]
+	...values: Array<ValueType | ValueType[]>
 ): HTMLNode;
 
 export function attr(value: string | number, preserveCR?: boolean): string;

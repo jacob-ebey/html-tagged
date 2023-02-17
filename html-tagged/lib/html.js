@@ -1,6 +1,6 @@
 /**
- * @typedef {import("./html").HTMLNode} HTMLNode
- * @typedef {import("./html").HTMLTag} HTMLTag
+ * @typedef {import("./html.js").HTMLNode} HTMLNode
+ * @typedef {import("./html.js").HTMLTag} HTMLTag
  */
 
 const customElementRegex =
@@ -40,13 +40,16 @@ export function value(unsafe) {
 		.replace(/'/g, "&#039;");
 }
 
-/** @type {import("./html").html} */
+/** @type {import("./html.js").html} */
 export function html(template, ...args) {
 	let result = "";
 	const final = template.length - 1;
 	for (let i = 0; i < final; i++) {
 		result += template[i];
-		let argArray = Array.isArray(args[i]) ? args[i] : [args[i]];
+		let argArray = args[i];
+		if (!Array.isArray(argArray)) {
+			argArray = [argArray];
+		}
 
 		for (const arg of argArray) {
 			switch (typeof arg) {

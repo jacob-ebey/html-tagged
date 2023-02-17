@@ -1,6 +1,6 @@
 /**
  * @typedef {{
- *  root: import("./html").HtmlNode;
+ *  root: import("./html.js").HTMLNode;
  *  headIndex: number;
  *  head: string;
  *  foundBody: boolean;
@@ -10,7 +10,7 @@
  * }} RenderToStringContext
  */
 
-/** @type {import("./render").renderToString} */
+/** @type {import("./render.js").renderToString} */
 export function renderToString(node, args) {
 	args = args || {};
 	const customElements = args.elements || {};
@@ -35,12 +35,12 @@ export function renderToString(node, args) {
 				break;
 			case "object":
 				if (
-					!chunk.closeTag &&
+					!("closeTag" in chunk) &&
 					((chunk.tagName === "script" && ctx.foundBody) ||
 						(chunk.tagName === "style" && ctx.headIndex !== -1))
 				) {
 					let collected = `<${chunk.tagName}`;
-					if (chunk.attrs) collected += ` ${chunk.attrs}`;
+					if ("attrs" in chunk) collected += ` ${chunk.attrs}`;
 					collected += ">";
 					collected += node.__chunks[++i];
 					collected += `</${chunk.tagName}>`;
@@ -62,7 +62,7 @@ export function renderToString(node, args) {
 				}
 
 				if (chunk.tagName === "slot") {
-					if (chunk.closeTag) break;
+					if ("closeTag" in chunk) break;
 
 					result += renderToString.call(
 						ctx,
@@ -72,7 +72,7 @@ export function renderToString(node, args) {
 					break;
 				}
 
-				if (chunk.closeTag) {
+				if ("closeTag" in chunk) {
 					if (
 						chunk.tagName === "head" &&
 						ctx.headIndex === -1 &&
@@ -103,7 +103,7 @@ export function renderToString(node, args) {
 						i++;
 						const nextChunk = node.__chunks[i];
 						if (typeof nextChunk === "object") {
-							if (nextChunk.closeTag) depth--;
+							if ("closeTag" in nextChunk) depth--;
 							else depth++;
 						}
 					}
@@ -136,6 +136,7 @@ export function renderToString(node, args) {
  */
 function parseAttributes(str) {
 	const splitAttrsTokenizer = /([a-z0-9_\:\-]*)\s*?=\s*?(['"]?)(.*?)\2\s+/gim;
+	/** @type {Record<string, string>} */
 	const obj = {};
 	let token;
 	if (str) {
