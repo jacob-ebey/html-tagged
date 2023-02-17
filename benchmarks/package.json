@@ -10,6 +10,6 @@
 	},
 	"dependencies": {
 		"@enhance/ssr": "^3.0.9",
-		"html-tagged": "0.0.4"
+		"html-tagged": "0.0.5"
 	}
 }
