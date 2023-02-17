@@ -1,3 +1,5 @@
+import { isHTMLTag, HTMLNodeSymbol } from "./html.js";
+
 /**
  * @typedef {{
  *  root: import("./html.js").HTMLNode;
@@ -14,6 +16,7 @@
 export function renderToString(node, args) {
 	args = args || {};
 	const customElements = args.elements || {};
+	const chunks = node[2];
 
 	let result = "";
 	/** @type {RenderToStringContext} */
@@ -26,100 +29,104 @@ export function renderToString(node, args) {
 		scriptCache: new Set(),
 		styleCache: new Set(),
 	};
-	for (let i = 0; i < node.__chunks.length; i++) {
-		const chunk = node.__chunks[i];
+	for (let i = 0; i < chunks.length; i++) {
+		const chunk = chunks[i];
 
 		switch (typeof chunk) {
 			case "string":
 				result += chunk;
 				break;
 			case "object":
-				const closeTag = "closeTag" in chunk && chunk.closeTag;
-				const hasAttrs = "attrs" in chunk && chunk.attrs;
-				if (
-					!closeTag &&
-					((chunk.tagName === "script" && ctx.foundBody) ||
-						(chunk.tagName === "style" && ctx.headIndex !== -1))
-				) {
-					let collected = `<${chunk.tagName}`;
-					if (hasAttrs) collected += ` ${chunk.attrs}`;
-					collected += ">";
-					collected += node.__chunks[++i];
-					collected += `</${chunk.tagName}>`;
-					++i;
+				if (isHTMLTag(chunk)) {
+					const closeTag = chunk[1];
+					const tagName = chunk[2];
+					const hasAttrs = chunk[3];
 
-					switch (chunk.tagName) {
-						case "script":
-							if (ctx.scriptCache.has(collected)) continue;
-							ctx.scriptCache.add(collected);
-							ctx.body += collected;
-							break;
-						case "style":
-							if (ctx.styleCache.has(collected)) continue;
-							ctx.styleCache.add(collected);
-							ctx.head += collected;
-							break;
-					}
-					continue;
-				}
-
-				if (chunk.tagName === "slot") {
-					if (closeTag) break;
-
-					result += renderToString.call(
-						ctx,
-						{ __chunks: args.__slot || [] },
-						{ ...args, __slot: undefined }
-					);
-					break;
-				}
-
-				if (closeTag) {
 					if (
-						chunk.tagName === "head" &&
-						ctx.headIndex === -1 &&
-						ctx.root === node
+						!closeTag &&
+						((tagName === "script" && ctx.foundBody) ||
+							(tagName === "style" && ctx.headIndex !== -1))
 					) {
-						ctx.headIndex = result.length;
-					} else if (chunk.tagName === "body" && ctx.root === node) {
-						ctx.foundBody = false;
-						result += ctx.body;
-					}
-					result += `</${chunk.tagName}>`;
-				} else {
-					if (chunk.tagName === "body") {
-						ctx.foundBody = true;
-					}
-					result += `<${chunk.tagName}`;
-					if (hasAttrs) result += ` ${chunk.attrs}`;
-					result += ">";
+						let collected = `<${tagName}`;
+						if (hasAttrs) collected += ` ${hasAttrs}`;
+						collected += ">";
+						collected += chunks[++i];
+						collected += `</${tagName}>`;
+						++i;
 
-					const CustomElement = customElements[chunk.tagName];
-					if (!CustomElement) {
+						switch (tagName) {
+							case "script":
+								if (ctx.scriptCache.has(collected)) continue;
+								ctx.scriptCache.add(collected);
+								ctx.body += collected;
+								break;
+							case "style":
+								if (ctx.styleCache.has(collected)) continue;
+								ctx.styleCache.add(collected);
+								ctx.head += collected;
+								break;
+						}
+						continue;
+					}
+
+					if (tagName === "slot") {
+						if (closeTag) break;
+
+						result += renderToString.call(
+							ctx,
+							[HTMLNodeSymbol, "", args.__slot || []],
+							{ ...args, __slot: undefined }
+						);
 						break;
 					}
 
-					let start = i + 1;
-					let depth = 1;
-					while (depth > 0) {
-						i++;
-						const nextChunk = node.__chunks[i];
-						if (typeof nextChunk === "object") {
-							if ("closeTag" in nextChunk && nextChunk.closeTag) depth--;
-							else depth++;
+					if (closeTag) {
+						if (
+							tagName === "head" &&
+							ctx.headIndex === -1 &&
+							ctx.root === node
+						) {
+							ctx.headIndex = result.length;
+						} else if (tagName === "body" && ctx.root === node) {
+							ctx.foundBody = false;
+							result += ctx.body;
 						}
-					}
-					i--;
-					const slotChunks = node.__chunks.slice(start, i + 1);
+						result += `</${tagName}>`;
+					} else {
+						if (tagName === "body") {
+							ctx.foundBody = true;
+						}
+						result += `<${tagName}`;
+						if (hasAttrs) result += ` ${hasAttrs}`;
+						result += ">";
 
-					if (CustomElement) {
-						const customElementNode = CustomElement({
-							attrs: hasAttrs ? parseAttributes(chunk.attrs) : {},
-						});
-						result += renderToString.call(ctx, customElementNode, {
-							...args,
-							__slot: slotChunks,
-						});
+						const CustomElement = customElements[tagName];
+						if (!CustomElement) {
+							break;
+						}
+
+						let start = i + 1;
+						let depth = 1;
+						while (depth > 0) {
+							i++;
+							const nextChunk = chunks[i];
+							if (isHTMLTag(nextChunk)) {
+								if (nextChunk[1]) depth--;
+								else depth++;
+							}
+						}
+						i--;
+						const slotChunks = chunks.slice(start, i + 1);
+
+						if (CustomElement) {
+							const customElementNode = CustomElement({
+								attrs: hasAttrs ? parseAttributes(hasAttrs) : {},
+							});
+							result += renderToString.call(ctx, customElementNode, {
+								...args,
+								__slot: slotChunks,
+							});
+						}
 					}
 				}
 				break;

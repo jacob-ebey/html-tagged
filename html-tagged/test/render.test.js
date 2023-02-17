@@ -84,7 +84,6 @@ describe("renderToString", () => {
 				},
 			}
 		);
-		console.log(JSON.stringify(result));
 		inlineSnapshot(
 			result,
 			`<div>

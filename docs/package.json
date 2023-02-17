@@ -9,7 +9,7 @@
 	"dependencies": {
 		"front-matter": "4.0.2",
 		"highlight.js": "11.7.0",
-		"html-tagged": "*",
+		"html-tagged": "0.0.4",
 		"marked": "4.2.12",
 		"router-trie": "0.0.8"
 	},
