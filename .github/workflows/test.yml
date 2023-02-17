@@ -1,6 +1,14 @@
 name: Test
 
-on: [push]
+on:
+  push:
+    paths-ignore:
+      - ".changeset/**"
+      - "benchmarks/**"
+  pull_request:
+    paths-ignore:
+      - ".changeset/**"
+      - "benchmarks/**"
 
 concurrency: test-${{ github.workflow }}-${{ github.ref }}
 
