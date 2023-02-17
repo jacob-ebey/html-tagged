@@ -38,5 +38,5 @@ jobs:
       - name: Install dependencies
         uses: bahmutov/npm-install@v1
 
-      - name: Run Tests
+      - name: Run Typecheck
         run: npm run typecheck
