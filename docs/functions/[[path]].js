@@ -1,4 +1,4 @@
-import { renderToString } from "html-tagged";
+import { renderToString, isHTMLNode, isHTMLTag } from "html-tagged";
 import { createTrie, matchTrie } from "router-trie";
 
 import elements from "../elements/index.js";
@@ -49,11 +49,11 @@ export async function onRequest(context) {
 		const htmlNode = RouteComponent({ data });
 
 		if (lastNode) {
-			let slotIndex = htmlNode.__chunks.findIndex(
-				(n) => typeof n === "object" && n.tagName === "slot"
+			let slotIndex = htmlNode[2].findIndex(
+				(n) => isHTMLTag(n) && n[2] === "slot"
 			);
 			if (slotIndex !== -1) {
-				htmlNode.__chunks.splice(slotIndex, 2, ...lastNode.__chunks);
+				htmlNode[2].splice(slotIndex, 2, ...lastNode[2]);
 			}
 		}
 		lastNode = htmlNode;

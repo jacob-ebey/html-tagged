@@ -36,11 +36,11 @@ For a basic "hello world" page:
 | Library      | Ops/sec |
 | ------------ | ------- |
 | @enhance/ssr | 64867   |
-| html-tagged  | 233418  |
+| html-tagged  | 256122  |
 
 For the Oven-sh's Bun HUGE README (7630 lines):
 
 | Library      | Ops/sec |
 | ------------ | ------- |
 | @enhance/ssr | 47      |
-| html-tagged  | 284     |
+| html-tagged  | 306     |

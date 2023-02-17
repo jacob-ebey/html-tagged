@@ -3,6 +3,21 @@
  * @typedef {import("./html.js").HTMLTag} HTMLTag
  */
 
+/** @type {import("./html.js").HTMLTagSymbol} */
+export const HTMLTagSymbol = Symbol("HTMLTag");
+/** @type {import("./html.js").HTMLNodeSymbol} */
+export const HTMLNodeSymbol = Symbol("HTMLNode");
+
+/** @type {import("./html.js").isHTMLTag} */
+export function isHTMLTag(value) {
+	return Array.isArray(value) && value[0] === HTMLTagSymbol;
+}
+
+/** @type {import("./html.js").isHTMLNode} */
+export function isHTMLNode(value) {
+	return Array.isArray(value) && value[0] === HTMLNodeSymbol;
+}
+
 const customElementRegex =
 	/^[a-z](?:[\.0-9_a-z\xB7\xC0-\xD6\xD8-\xF6\xF8-\u037D\u037F-\u1FFF\u200C\u200D\u203F\u2040\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD]|[\uD800-\uDB7F][\uDC00-\uDFFF])*-(?:[\x2D\.0-9_a-z\xB7\xC0-\xD6\xD8-\xF6\xF8-\u037D\u037F-\u1FFF\u200C\u200D\u203F\u2040\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD]|[\uD800-\uDB7F][\uDC00-\uDFFF])*$/;
 
@@ -40,6 +55,17 @@ export function value(unsafe) {
 		.replace(/'/g, "&#039;");
 }
 
+/**
+ *
+ * @param {boolean} closeTag
+ * @param {string} tagName
+ * @param {string} attributes
+ * @returns {HTMLTag}
+ */
+function h(closeTag, tagName, attributes = null) {
+	return [HTMLTagSymbol, closeTag, tagName, attributes];
+}
+
 /** @type {import("./html.js").html} */
 export function html(template, ...args) {
 	let result = "";
@@ -47,7 +73,7 @@ export function html(template, ...args) {
 	for (let i = 0; i < final; i++) {
 		result += template[i];
 		let argArray = args[i];
-		if (!Array.isArray(argArray)) {
+		if (!Array.isArray(argArray) || isHTMLNode(argArray)) {
 			argArray = [argArray];
 		}
 
@@ -64,8 +90,8 @@ export function html(template, ...args) {
 					break;
 				case "object":
 					if (!arg) break;
-					if (typeof arg.__html === "string") {
-						result += arg.__html;
+					if (isHTMLNode(arg)) {
+						result += arg[1];
 					}
 					break;
 			}
@@ -94,12 +120,9 @@ export function html(template, ...args) {
 			sub = result.substring(lastIndex, token.index);
 			sub && chunks.push(sub);
 			if (closeTag) {
-				chunks.push({ tagName, closeTag: true });
+				chunks.push(h(true, tagName));
 			} else {
-				chunks.push({
-					tagName,
-					attrs: token[3],
-				});
+				chunks.push(h(false, tagName, token[3]));
 			}
 			lastIndex = token.index + token[0].length;
 		}
@@ -107,7 +130,7 @@ export function html(template, ...args) {
 	sub = result.substring(lastIndex);
 	sub && chunks.push(sub);
 
-	return { __html: result, __chunks: chunks };
+	return [HTMLNodeSymbol, result, chunks];
 }
 
 /**

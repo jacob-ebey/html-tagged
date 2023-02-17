@@ -1,17 +1,22 @@
-export type HTMLTag =
-	| {
-			tagName: string;
-			closeTag: true;
-	  }
-	| {
-			tagName: string;
-			attrs: string | undefined;
-	  };
+export const HTMLTagSymbol: symbol;
+export type HTMLTagName = string & {};
+export type HTMLTagCloseTag = boolean & {};
+export type HTMLTagAttributes = string & {};
+export type HTMLTag = [
+	typeof HTMLTagSymbol,
+	HTMLTagCloseTag,
+	HTMLTagName,
+	HTMLTagAttributes | null
+] & {};
 
-export interface HTMLNode {
-	__html: string;
-	__chunks: Array<string | HTMLTag>;
-}
+export const HTMLNodeSymbol: symbol;
+export type HTMLNodeHTML = string & {};
+export type HTMLNodeChunks = Array<string | HTMLTag> & {};
+export type HTMLNode = [
+	typeof HTMLNodeSymbol,
+	HTMLNodeHTML,
+	HTMLNodeChunks | null
+] & {};
 
 type ValueType = string | number | boolean | HTMLNode;
 
@@ -23,3 +28,6 @@ export function html(
 export function attr(value: string | number, preserveCR?: boolean): string;
 
 export function value(unsafe: string): string;
+
+export function isHTMLTag(value: any): value is HTMLTag;
+export function isHTMLNode(value: any): value is HTMLNode;

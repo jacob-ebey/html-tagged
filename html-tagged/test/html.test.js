@@ -8,48 +8,48 @@ import { inlineSnapshot } from "./assert.js";
 describe("html", () => {
 	it("should return an object with an __html property", () => {
 		const result = html`<div></div>`;
-		inlineSnapshot(result.__html, "<div></div>");
+		inlineSnapshot(result[1], "<div></div>");
 	});
 
 	describe("values", () => {
 		it("should allow string", () => {
 			const result = html`<div>${"a"}</div>`;
-			inlineSnapshot(result.__html, "<div>a</div>");
+			inlineSnapshot(result[1], "<div>a</div>");
 		});
 
 		it("should allow integer", () => {
 			const result = html`<div>${1}</div>`;
-			inlineSnapshot(result.__html, "<div>1</div>");
+			inlineSnapshot(result[1], "<div>1</div>");
 		});
 
 		it("should allow float", () => {
 			const result = html`<div>${0.999999999}</div>`;
-			inlineSnapshot(result.__html, "<div>0.999999999</div>");
+			inlineSnapshot(result[1], "<div>0.999999999</div>");
 		});
 
 		it("should allow true", () => {
 			const result = html`<div>${true}</div>`;
-			inlineSnapshot(result.__html, "<div>true</div>");
+			inlineSnapshot(result[1], "<div>true</div>");
 		});
 
 		it("should not print false", () => {
 			const result = html`<div>${false}</div>`;
-			inlineSnapshot(result.__html, "<div></div>");
+			inlineSnapshot(result[1], "<div></div>");
 		});
 
 		it("should not print null", () => {
 			const result = html`<div>${null}</div>`;
-			inlineSnapshot(result.__html, "<div></div>");
+			inlineSnapshot(result[1], "<div></div>");
 		});
 
 		it("should not print undefined", () => {
 			const result = html`<div>${undefined}</div>`;
-			inlineSnapshot(result.__html, "<div></div>");
+			inlineSnapshot(result[1], "<div></div>");
 		});
 
 		it("should allow HTMLNode", () => {
 			const result = html`<div>${html`<span></span>`}</div>`;
-			inlineSnapshot(result.__html, "<div><span></span></div>");
+			inlineSnapshot(result[1], "<div><span></span></div>");
 		});
 
 		it("should allow array of mixed values", () => {
@@ -57,7 +57,7 @@ describe("html", () => {
 				${["a", 1, true, false, null, undefined, html`<span>2</span>`]}
 			</div>`;
 			inlineSnapshot(
-				result.__html,
+				result[1],
 				`<div>
 				a1true<span>2</span>
 			</div>`
@@ -71,11 +71,11 @@ describe("html", () => {
 				console.log("Hello, World!");
 			</script>`;
 			inlineSnapshot(
-				JSON.stringify(result.__chunks),
+				JSON.stringify(result[2]),
 				JSON.stringify([
-					{ tagName: "script" },
+					[null, false, "script", null],
 					'\n\t\t\t\tconsole.log("Hello, World!");\n\t\t\t',
-					{ tagName: "script", closeTag: true },
+					[null, true, "script", null],
 				])
 			);
 		});
@@ -89,15 +89,15 @@ describe("html", () => {
 				</script>`}`;
 
 			inlineSnapshot(
-				JSON.stringify(result.__chunks),
+				JSON.stringify(result[2]),
 				JSON.stringify([
-					{ tagName: "script" },
+					[null, false, "script", null],
 					'\n\t\t\t\t\tconsole.log("a");\n\t\t\t\t',
-					{ tagName: "script", closeTag: true },
+					[null, true, "script", null],
 					"\n\t\t\t\t",
-					{ tagName: "script" },
+					[null, false, "script", null],
 					'\n\t\t\t\t\tconsole.log("b");\n\t\t\t\t',
-					{ tagName: "script", closeTag: true },
+					[null, true, "script", null],
 				])
 			);
 		});
@@ -112,11 +112,11 @@ describe("html", () => {
 				}
 			</style>`;
 			inlineSnapshot(
-				JSON.stringify(result.__chunks),
+				JSON.stringify(result[2]),
 				JSON.stringify([
-					{ tagName: "style" },
+					[null, false, "style", null],
 					"\n\t\t\t\tbody {\n\t\t\t\t\tbackground-color: red;\n\t\t\t\t}\n\t\t\t",
-					{ tagName: "style", closeTag: true },
+					[null, true, "style", null],
 				])
 			);
 		});
@@ -133,15 +133,15 @@ describe("html", () => {
 					}
 				</style>`}`;
 			inlineSnapshot(
-				JSON.stringify(result.__chunks),
+				JSON.stringify(result[2]),
 				JSON.stringify([
-					{ tagName: "style" },
+					[null, false, "style", null],
 					"\n\t\t\t\t\tbody {\n\t\t\t\t\t\tbackground-color: red;\n\t\t\t\t\t}\n\t\t\t\t",
-					{ tagName: "style", closeTag: true },
+					[null, true, "style", null],
 					"\n\t\t\t\t",
-					{ tagName: "style" },
+					[null, false, "style", null],
 					"\n\t\t\t\t\tbody {\n\t\t\t\t\t\tcolor: green;\n\t\t\t\t\t}\n\t\t\t\t",
-					{ tagName: "style", closeTag: true },
+					[null, true, "style", null],
 				])
 			);
 		});
@@ -153,18 +153,18 @@ describe("html", () => {
 				<custom-element name="value">a</custom-element>
 			</div>`;
 			inlineSnapshot(
-				result.__html,
+				result[1],
 				`<div>
 				<custom-element name="value">a</custom-element>
 			</div>`
 			);
 			inlineSnapshot(
-				JSON.stringify(result.__chunks),
+				JSON.stringify(result[2]),
 				JSON.stringify([
 					"<div>\n\t\t\t\t",
-					{ tagName: "custom-element", attrs: 'name="value"' },
+					[null, false, "custom-element", 'name="value"'],
 					"a",
-					{ tagName: "custom-element", closeTag: true },
+					[null, true, "custom-element", null],
 					"\n\t\t\t</div>",
 				])
 			);
@@ -178,7 +178,7 @@ describe("html", () => {
 				</custom-element-a>
 			</div>`;
 			inlineSnapshot(
-				result.__html,
+				result[1],
 				`<div>
 				<custom-element-a name="value">
 					a
@@ -187,16 +187,16 @@ describe("html", () => {
 			</div>`
 			);
 			inlineSnapshot(
-				JSON.stringify(result.__chunks),
+				JSON.stringify(result[2]),
 				JSON.stringify([
 					"<div>\n\t\t\t\t",
-					{ tagName: "custom-element-a", attrs: 'name="value"' },
+					[null, false, "custom-element-a", 'name="value"'],
 					"\n\t\t\t\t\ta\n\t\t\t\t\t",
-					{ tagName: "custom-element-b", attrs: 'name="value"' },
+					[null, false, "custom-element-b", 'name="value"'],
 					"b",
-					{ tagName: "custom-element-b", closeTag: true },
+					[null, true, "custom-element-b", null],
 					"\n\t\t\t\t",
-					{ tagName: "custom-element-a", closeTag: true },
+					[null, true, "custom-element-a", null],
 					"\n\t\t\t</div>",
 				])
 			);
@@ -209,7 +209,7 @@ describe("html", () => {
 				</custom-element-a>
 			</div>`;
 			inlineSnapshot(
-				result.__html,
+				result[1],
 				`<div>
 				<custom-element-a name="value">
 					a <custom-element-b name="value">b</custom-element-b>
@@ -217,16 +217,16 @@ describe("html", () => {
 			</div>`
 			);
 			inlineSnapshot(
-				JSON.stringify(result.__chunks),
+				JSON.stringify(result[2]),
 				JSON.stringify([
 					"<div>\n\t\t\t\t",
-					{ tagName: "custom-element-a", attrs: 'name="value"' },
+					[null, false, "custom-element-a", 'name="value"'],
 					"\n\t\t\t\t\ta ",
-					{ tagName: "custom-element-b", attrs: 'name="value"' },
+					[null, false, "custom-element-b", 'name="value"'],
 					"b",
-					{ tagName: "custom-element-b", closeTag: true },
+					[null, true, "custom-element-b", null],
 					"\n\t\t\t\t",
-					{ tagName: "custom-element-a", closeTag: true },
+					[null, true, "custom-element-a", null],
 					"\n\t\t\t</div>",
 				])
 			);
