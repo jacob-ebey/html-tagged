@@ -6,8 +6,10 @@ import routes from "../routes/index.js";
 
 const routerTrie = createTrie(routes);
 
+/**
+ * @param {import("@cloudflare/workers-types").EventContext<{}, string, unknown>} context
+ */
 export async function onRequest(context) {
-	/** @type {Request} */
 	const request = context.request;
 	const url = new URL(request.url);
 
@@ -19,13 +21,17 @@ export async function onRequest(context) {
 
 	const matchesData = new Map();
 	for (const match of matches) {
-		if (match.module && match.module.data) {
-			const dataPromise = Promise.resolve(match.module.data({ request }));
+		if (
+			match.module &&
+			"data" in match.module &&
+			typeof match.module.data === "function"
+		) {
+			const dataPromise = Promise.resolve(match.module.data(context));
 			matchesData.set(match.id, dataPromise);
 		}
 	}
 
-	/** @type {import("html-tagged/lib/html").HTMLNode} */
+	/** @type {import("html-tagged").HTMLNode} */
 	let lastNode = null;
 	for (let i = matches.length - 1; i >= 0; i--) {
 		const match = matches[i];

@@ -2,7 +2,8 @@ import * as docsModule from "./docs.js";
 import * as homeModule from "./home.js";
 import * as rootModule from "./root.js";
 
-export default [
+/** @type {import("./index.js").Route[]} */
+const routes = [
 	{
 		id: "root",
 		module: rootModule,
@@ -20,3 +21,5 @@ export default [
 		],
 	},
 ];
+
+export default routes;
