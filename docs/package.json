@@ -8,7 +8,7 @@
 	},
 	"dependencies": {
 		"html-tagged": "*",
-		"router-trie": "^0.0.8"
+		"router-trie": "0.0.8"
 	},
 	"devDependencies": {
 		"wrangler": "^2.7.0"
