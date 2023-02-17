@@ -1,5 +1,11 @@
 # html-tagged
 
+## 0.0.5
+
+### Patch Changes
+
+- [#7](https://github.com/jacob-ebey/html-tagged/pull/7) [`326c373`](https://github.com/jacob-ebey/html-tagged/commit/326c3733777c1e76ca111c2dafed4f9c4facc869) Thanks [@jacob-ebey](https://github.com/jacob-ebey)! - use arrays to help with optimization
+
 ## 0.0.4
 
 ### Patch Changes
