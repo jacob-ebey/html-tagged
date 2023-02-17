@@ -22,7 +22,7 @@ jobs:
 
       - name: Run Tests
         run: npm run test
-  
+
   typecheck:
     name: Typecheck
     runs-on: ubuntu-latest

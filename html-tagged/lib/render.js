@@ -34,13 +34,15 @@ export function renderToString(node, args) {
 				result += chunk;
 				break;
 			case "object":
+				const closeTag = "closeTag" in chunk && chunk.closeTag;
+				const hasAttrs = "attrs" in chunk && chunk.attrs;
 				if (
-					!("closeTag" in chunk) &&
+					!closeTag &&
 					((chunk.tagName === "script" && ctx.foundBody) ||
 						(chunk.tagName === "style" && ctx.headIndex !== -1))
 				) {
 					let collected = `<${chunk.tagName}`;
-					if ("attrs" in chunk) collected += ` ${chunk.attrs}`;
+					if (hasAttrs) collected += ` ${chunk.attrs}`;
 					collected += ">";
 					collected += node.__chunks[++i];
 					collected += `</${chunk.tagName}>`;
@@ -62,7 +64,7 @@ export function renderToString(node, args) {
 				}
 
 				if (chunk.tagName === "slot") {
-					if ("closeTag" in chunk) break;
+					if (closeTag) break;
 
 					result += renderToString.call(
 						ctx,
@@ -72,7 +74,7 @@ export function renderToString(node, args) {
 					break;
 				}
 
-				if ("closeTag" in chunk) {
+				if (closeTag) {
 					if (
 						chunk.tagName === "head" &&
 						ctx.headIndex === -1 &&
@@ -89,7 +91,7 @@ export function renderToString(node, args) {
 						ctx.foundBody = true;
 					}
 					result += `<${chunk.tagName}`;
-					if (chunk.attrs) result += ` ${chunk.attrs}`;
+					if (hasAttrs) result += ` ${chunk.attrs}`;
 					result += ">";
 
 					const CustomElement = customElements[chunk.tagName];
@@ -103,7 +105,7 @@ export function renderToString(node, args) {
 						i++;
 						const nextChunk = node.__chunks[i];
 						if (typeof nextChunk === "object") {
-							if ("closeTag" in nextChunk) depth--;
+							if ("closeTag" in nextChunk && nextChunk.closeTag) depth--;
 							else depth++;
 						}
 					}
@@ -112,7 +114,7 @@ export function renderToString(node, args) {
 
 					if (CustomElement) {
 						const customElementNode = CustomElement({
-							attrs: parseAttributes(chunk.attrs),
+							attrs: hasAttrs ? parseAttributes(chunk.attrs) : {},
 						});
 						result += renderToString.call(ctx, customElementNode, {
 							...args,
