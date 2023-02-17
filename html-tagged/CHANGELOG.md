@@ -1,5 +1,13 @@
 # html-tagged
 
+## 0.0.4
+
+### Patch Changes
+
+- [`5f6db0f`](https://github.com/jacob-ebey/html-tagged/commit/5f6db0f9cc0c87f554eb82b5fda59eae20c34c08) Thanks [@jacob-ebey](https://github.com/jacob-ebey)! - fix bug
+
+- [`64d98df`](https://github.com/jacob-ebey/html-tagged/commit/64d98dfcc861760f3c4f2f94670c0928623cfd8b) Thanks [@jacob-ebey](https://github.com/jacob-ebey)! - export more types
+
 ## 0.0.3
 
 ### Patch Changes
