@@ -1,0 +1,38 @@
+name: Docs
+
+on:
+  push:
+    paths-ignore:
+      - ".changeset/**"
+      - "benchmarks/**"
+
+concurrency: docs-${{ github.workflow }}-${{ github.ref }}
+
+env:
+  TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+  TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version-file: ".nvmrc"
+
+      - name: Install dependencies
+        uses: bahmutov/npm-install@v1
+
+      - name: Publish to Cloudflare Pages
+        uses: cloudflare/pages-action@0fc25c3c282fb26e9a53abfadf6d2898adcac3de
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          projectName: ${{ secrets.CLOUDFLARE_PROJECT_NAME }}
+          workingDirectory: docs
+          directory: public

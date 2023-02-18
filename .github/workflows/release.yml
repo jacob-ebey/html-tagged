@@ -7,6 +7,10 @@ on:
 
 concurrency: release-${{ github.workflow }}-${{ github.ref }}
 
+env:
+  TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+  TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+
 jobs:
   release:
     name: Release
@@ -18,7 +22,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 18
+          node-version-file: ".nvmrc"
 
       - name: Install dependencies
         uses: bahmutov/npm-install@v1
