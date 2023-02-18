@@ -1,4 +1,4 @@
-import { renderToString, isHTMLNode, isHTMLTag } from "html-tagged";
+import { renderToString, isHTMLTag } from "html-tagged";
 import { createTrie, matchTrie } from "router-trie";
 
 import elements from "../elements/index.js";
