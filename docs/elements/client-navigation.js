@@ -3,6 +3,8 @@ import { html } from "html-tagged";
 export default function ClientNavigation() {
 	return html`
 		<script type="module">
+			import { DiffDOM } from "https://esm.sh/diff-dom@5.0.3";
+
 			if (typeof navigation !== "undefined") {
 				let lastAbortController;
 				navigation.addEventListener("navigate", (event) => {
@@ -41,30 +43,40 @@ export default function ClientNavigation() {
 				});
 			}
 
+			const dd = new DiffDOM();
 			function updateDOM(newHTML) {
-				const htmlElement = document.createElement("html");
-				htmlElement.innerHTML = newHTML;
+				const parser = new DOMParser();
+				const newDOM = parser.parseFromString(newHTML, "text/html");
 
-				const existingScripts = new Set();
-				let childNodesLength = document.body.childNodes.length;
-				for (let i = childNodesLength - 1; i >= 0; i--) {
-					if (document.body.childNodes[i].tagName === "SCRIPT") {
-						existingScripts.add(document.body.childNodes[i].innerHTML);
-						continue;
-					}
-					document.body.removeChild(document.body.childNodes[i]);
-				}
+				const currentScripts = new Set();
+				const scripts = [];
+				document.querySelectorAll("script").forEach((script) => {
+					currentScripts.add(script.src || script.textContent);
+					script.parentElement.removeChild(script);
+					scripts.push(script);
+				});
 
-				const bodyChildren = htmlElement.querySelector("body").childNodes;
-				childNodesLength = bodyChildren.length;
-				for (let i = childNodesLength - 1; i >= 0; i--) {
-					if (
-						bodyChildren[i].tagName === "SCRIPT" &&
-						existingScripts.has(bodyChildren[i].innerHTML)
-					) {
-						continue;
+				newDOM.querySelectorAll("script").forEach((script) => {
+					if (!currentScripts.has(script.src || script.textContent)) {
+						const newScript = document.createElement("script");
+						newScript.async = script.async;
+						newScript.defer = script.defer;
+						newScript.type = script.type;
+						if (script.src) {
+							newScript.src = script.src;
+						} else {
+							newScript.innerHTML = script.innerHTML;
+						}
+						scripts.push(newScript);
 					}
-					document.body.prepend(bodyChildren[i]);
+					script.parentElement.removeChild(script);
+				});
+
+				const diff = dd.diff(document.documentElement, newDOM.documentElement);
+				dd.apply(document.documentElement, diff);
+
+				for (const script of scripts) {
+					document.body.appendChild(script);
 				}
 
 				scrollTo(0, 0);

@@ -31,7 +31,7 @@ export default html`
 		}
 
 		@media (prefers-color-scheme: dark) {
-			:root[color-mode="user"] {
+			:root {
 				--color-accent: #0097fc4f;
 				--color-bg: #333;
 				--color-bg-secondary: #555;
