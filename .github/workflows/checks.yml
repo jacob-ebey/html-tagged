@@ -5,10 +5,6 @@ on:
     paths-ignore:
       - ".changeset/**"
       - "benchmarks/**"
-  pull_request:
-    paths-ignore:
-      - ".changeset/**"
-      - "benchmarks/**"
 
 concurrency: checks-${{ github.workflow }}-${{ github.ref }}
 
