@@ -1,4 +1,4 @@
-name: Test
+name: Checks
 
 on:
   push:
@@ -10,11 +10,11 @@ on:
       - ".changeset/**"
       - "benchmarks/**"
 
-concurrency: test-${{ github.workflow }}-${{ github.ref }}
+concurrency: checks-${{ github.workflow }}-${{ github.ref }}
 
 jobs:
-  test:
-    name: Test
+  unit-test:
+    name: Unit Test
     runs-on: ubuntu-latest
     steps:
       - name: Checkout 🛎️
@@ -23,7 +23,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 18
+          node-version-file: ".nvmrc"
 
       - name: Install dependencies
         uses: bahmutov/npm-install@v1
