@@ -1,5 +1,11 @@
 # html-tagged
 
+## 0.0.6
+
+### Patch Changes
+
+- [#10](https://github.com/jacob-ebey/html-tagged/pull/10) [`f189c4f`](https://github.com/jacob-ebey/html-tagged/commit/f189c4f7ff467cdfb395fbd456a43fa7697de644) Thanks [@jacob-ebey](https://github.com/jacob-ebey)! - fix package.json to use exports
+
 ## 0.0.5
 
 ### Patch Changes
