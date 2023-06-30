@@ -14,8 +14,8 @@
 		"router-trie": "0.0.8"
 	},
 	"devDependencies": {
-		"@cloudflare/workers-types": "4.20230214.0",
-		"typescript": "4.9.5",
-		"wrangler": "2.7.0"
+		"@cloudflare/workers-types": "4.20230518.0",
+		"typescript": "5.1.6",
+		"wrangler": "3.1.1"
 	}
 }
