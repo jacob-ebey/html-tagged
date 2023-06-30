@@ -9,7 +9,7 @@
 		"bench:tagged": "node bench-tagged.js"
 	},
 	"dependencies": {
-		"@enhance/ssr": "^3.0.9",
+		"@enhance/ssr": "^3.4.1",
 		"html-tagged": "0.0.5"
 	}
 }
