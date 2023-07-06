@@ -1,0 +1,8 @@
+{
+  "deno.enable": true,
+  "deno.unstable": true,
+  "explorer.fileNesting.patterns": {
+    "deno.json": "package.json, package-lock.json",
+    "README.md": "CHANGELOG.md, LICENSE"
+  }
+}

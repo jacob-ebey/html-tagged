@@ -1,0 +1,276 @@
+export const snapshot = {};
+
+snapshot[`should return an object with an __html property 1`] = `"<div></div>"`;
+
+snapshot[`should allow string 1`] = `"<div>a</div>"`;
+
+snapshot[`should allow integer 1`] = `"<div>1</div>"`;
+
+snapshot[`should allow float 1`] = `"<div>0.999999999</div>"`;
+
+snapshot[`should allow true 1`] = `"<div>true</div>"`;
+
+snapshot[`should not print false 1`] = `"<div></div>"`;
+
+snapshot[`should not print null 1`] = `"<div></div>"`;
+
+snapshot[`should not print undefined 1`] = `"<div></div>"`;
+
+snapshot[`should allow HTMLNode 1`] = `"<div><span></span></div>"`;
+
+snapshot[`should allow array of mixed values 1`] = `
+"<div>
+    a1true<span>2</span>
+  </div>"
+`;
+
+snapshot[`scripts are found and parsed for bubbling during render 1`] = `
+[
+  [
+    Symbol(HTMLTag),
+    false,
+    "script",
+    null,
+  ],
+  '
+      console.log("Hello, World!");
+    ',
+  [
+    Symbol(HTMLTag),
+    true,
+    "script",
+    null,
+  ],
+]
+`;
+
+snapshot[`nested scripts are found and parsed for bubbling during render 1`] = `
+[
+  [
+    Symbol(HTMLTag),
+    false,
+    "script",
+    null,
+  ],
+  '
+        console.log("a");
+      ',
+  [
+    Symbol(HTMLTag),
+    true,
+    "script",
+    null,
+  ],
+  "
+      ",
+  [
+    Symbol(HTMLTag),
+    false,
+    "script",
+    null,
+  ],
+  '
+        console.log("b");
+      ',
+  [
+    Symbol(HTMLTag),
+    true,
+    "script",
+    null,
+  ],
+]
+`;
+
+snapshot[`styles are found and parsed for bubbling during render 1`] = `
+[
+  [
+    Symbol(HTMLTag),
+    false,
+    "style",
+    null,
+  ],
+  "
+      body {
+        background-color: red;
+      }
+    ",
+  [
+    Symbol(HTMLTag),
+    true,
+    "style",
+    null,
+  ],
+]
+`;
+
+snapshot[`nested styles are found and parsed for bubbling during render 1`] = `
+[
+  [
+    Symbol(HTMLTag),
+    false,
+    "style",
+    null,
+  ],
+  "
+        body {
+          background-color: red;
+        }
+      ",
+  [
+    Symbol(HTMLTag),
+    true,
+    "style",
+    null,
+  ],
+  "
+      ",
+  [
+    Symbol(HTMLTag),
+    false,
+    "style",
+    null,
+  ],
+  "
+        body {
+          color: green;
+        }
+      ",
+  [
+    Symbol(HTMLTag),
+    true,
+    "style",
+    null,
+  ],
+]
+`;
+
+snapshot[`custom-elements are found and parsed for expansion during render 1`] = `
+'<div>
+      <custom-element name="value">a</custom-element>
+    </div>'
+`;
+
+snapshot[`custom-elements are found and parsed for expansion during render 2`] = `
+[
+  "<div>
+      ",
+  [
+    Symbol(HTMLTag),
+    false,
+    "custom-element",
+    'name="value"',
+  ],
+  "a",
+  [
+    Symbol(HTMLTag),
+    true,
+    "custom-element",
+    null,
+  ],
+  "
+    </div>",
+]
+`;
+
+snapshot[`nested custom-elements are found and parsed for expansion during render 1`] = `
+"<div>
+" +
+  '      <custom-element-a name="value">
+' +
+  "        a
+" +
+  '        <custom-element-b name="value">b</custom-element-b>
+' +
+  "      </custom-element-a>
+" +
+  "    </div>"
+`;
+
+snapshot[`nested custom-elements are found and parsed for expansion during render 2`] = `
+[
+  "<div>
+      ",
+  [
+    Symbol(HTMLTag),
+    false,
+    "custom-element-a",
+    'name="value"',
+  ],
+  "
+        a
+        ",
+  [
+    Symbol(HTMLTag),
+    false,
+    "custom-element-b",
+    'name="value"',
+  ],
+  "b",
+  [
+    Symbol(HTMLTag),
+    true,
+    "custom-element-b",
+    null,
+  ],
+  "
+      ",
+  [
+    Symbol(HTMLTag),
+    true,
+    "custom-element-a",
+    null,
+  ],
+  "
+    </div>",
+]
+`;
+
+snapshot[`nested custom-elements are found in nested HTMLNode 1`] = `
+"<div>
+" +
+  '    <custom-element-a name="value">
+' +
+  '      a <custom-element-b name="value">b</custom-element-b>
+' +
+  "    </custom-element-a>
+" +
+  "  </div>"
+`;
+
+snapshot[`nested custom-elements are found in nested HTMLNode 2`] = `
+[
+  "<div>
+    ",
+  [
+    Symbol(HTMLTag),
+    false,
+    "custom-element-a",
+    'name="value"',
+  ],
+  "
+      a ",
+  [
+    Symbol(HTMLTag),
+    false,
+    "custom-element-b",
+    'name="value"',
+  ],
+  "b",
+  [
+    Symbol(HTMLTag),
+    true,
+    "custom-element-b",
+    null,
+  ],
+  "
+    ",
+  [
+    Symbol(HTMLTag),
+    true,
+    "custom-element-a",
+    null,
+  ],
+  "
+  </div>",
+]
+`;

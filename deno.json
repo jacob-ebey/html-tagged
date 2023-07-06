@@ -1,0 +1,13 @@
+{
+  "lock": false,
+  "tasks": {
+    "build": "deno run -A scripts/build-npm.ts",
+    "format": "deno fmt",
+    "check": "deno fmt --check && deno lint"
+  },
+  "exclude": [".changeset/", "CHANGELOG.md", "npm/"],
+  "imports": {
+    "asserts": "https://deno.land/std@0.193.0/testing/asserts.ts",
+    "snapshot": "https://deno.land/std@0.193.0/testing/snapshot.ts"
+  }
+}

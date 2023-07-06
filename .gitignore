@@ -1,4 +1,3 @@
-.DS_Store
-.turbo
-.snapshots
-node_modules
+node_modules/
+npm/
+package-lock.json
