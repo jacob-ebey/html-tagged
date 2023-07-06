@@ -1,5 +1,11 @@
 # html-tagged
 
+## 0.0.7
+
+### Patch Changes
+
+- a45ddbd: move to dnt as build system
+
 ## 0.0.6
 
 ### Patch Changes
