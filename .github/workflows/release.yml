@@ -2,39 +2,68 @@ name: Release
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
 
-concurrency: release-${{ github.workflow }}-${{ github.ref }}
-
-env:
-  TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
-  TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+concurrency: ${{ github.workflow }}-${{ github.ref }}
 
 jobs:
   release:
-    name: Release
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
-      - name: Checkout 🛎️
+      - name: Checkout
         uses: actions/checkout@v3
-
+      - name: Setup Deno
+        uses: denoland/setup-deno@v1
+        with:
+          deno-version: ~1.x
+      - name: Test Deno
+        run: deno test --allow-read
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v2
         with:
-          node-version-file: ".nvmrc"
+          node-version: 16
+      - name: Install Dependencies
+        run: npm i
 
-      - name: Install dependencies
-        uses: bahmutov/npm-install@v1
+      - name: Version
+        run: npx changeset version
+      - name: Read Version
+        id: version
+        run: |
+          echo Version $(cat package.json | jq -r '.version')
+          echo ::set-output name=VERSION::$(cat package.json | jq -r '.version')
+      - name: Needs Publishing
+        run: echo ::set-output name=CHANGES::$(git status -s .changeset CHANGELOG.md package.json | wc -l)
+        id: needs_publishing
+      - name: Remove Dependencies
+        run: rm -rf node_modules
 
-      - name: Create Release Pull Request or Release
-        id: changesets
-        uses: changesets/action@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Build and Test Node.js
+        run: deno task build
+
+      - name: Create Release PR ${{ steps.version.outputs.VERSION }}
+        if: steps.needs_publishing.outputs.CHANGES != '0'
+        uses: peter-evans/create-pull-request@v5
         with:
-          publish: npm run release
-          version: npm run version
-          commit: "chore: Update version for release"
-          title: "chore: Update version for release"
+          commit-message: Release ${{ steps.version.outputs.VERSION }}
+          branch: release-next
+          title: Release ${{ steps.version.outputs.VERSION }}
+          body: |
+            Release ${{ steps.version.outputs.VERSION }}
+          labels: |
+            release
+          assignees: jacob-ebey
+          reviewers: jacob-ebey
+      - name: Publish ${{ steps.version.outputs.VERSION }}
+        if: steps.needs_publishing.outputs.CHANGES == '0'
+        uses: JS-DevTools/npm-publish@v2
+        id: publish
+        with:
+          package: "npm"
+          token: ${{ secrets.NPM_TOKEN }}
+      - name: Create Release ${{ steps.version.outputs.VERSION }}
+        if: ${{ steps.publish.outputs.type }}
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ steps.version.outputs.VERSION }}

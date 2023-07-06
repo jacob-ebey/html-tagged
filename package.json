@@ -1,26 +1,17 @@
 {
-	"private": true,
-	"workspaces": [
-		"benchmarks",
-		"docs",
-		"html-tagged"
-	],
-	"scripts": {
-		"dev": "turbo run dev",
-		"bench": "turbo run bench",
-		"format": "prettier -w .",
-		"release": "changeset publish",
-		"test": "turbo run test",
-		"typecheck": "turbo run typecheck",
-		"version": "changeset version"
-	},
-	"devDependencies": {
-		"@changesets/changelog-github": "0.4.8",
-		"@changesets/cli": "2.26.2",
-		"prettier": "2.8.8",
-		"turbo": "1.10.6"
-	},
-	"prettier": {
-		"useTabs": true
-	}
+  "name": "html-tagged",
+  "version": "0.0.6",
+  "description": "html-tagged",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jacob-ebey/html-tagged.git"
+  },
+  "bugs": {
+    "url": "https://github.com/jacob-ebey/html-tagged/issues"
+  },
+  "devDependencies": {
+    "@changesets/changelog-github": "^0.4.8",
+    "@changesets/cli": "^2.26.2"
+  }
 }

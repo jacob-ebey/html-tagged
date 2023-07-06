@@ -1,0 +1,294 @@
+export const snapshot = {};
+
+snapshot[`should render a simple string 1`] = `"<div></div>"`;
+
+snapshot[`should render custom element without implementation to string 1`] = `"<div><custom-element></custom-element></div>"`;
+
+snapshot[`should render nested custom elements without implementation to string 1`] = `
+"<div>
+" +
+  "        <custom-element-a>
+" +
+  "          a
+" +
+  "          <custom-element-b>b</custom-element-b>
+" +
+  "        </custom-element-a>
+" +
+  "      </div>"
+`;
+
+snapshot[`should expand custom element with implementation 1`] = `"<div><custom-element><div>custom element</div></custom-element></div>"`;
+
+snapshot[`should expand custom element with slot 1`] = `
+"<div>
+" +
+  "      <custom-element><div>custom element <span>a</span></div></custom-element>
+" +
+  "    </div>"
+`;
+
+snapshot[`should pass attrs to custom-element 1`] = `
+"<div>
+" +
+  '      <custom-element name="test"><div>custom element test <span>a</span></div></custom-element>
+' +
+  "    </div>"
+`;
+
+snapshot[`should expand nested custom element with slot 1`] = `
+"<div>
+" +
+  "      <custom-element><div>custom element 
+" +
+  "        <span>a</span>
+" +
+  "        <custom-element><div>custom element 
+" +
+  "          <span>b</span>
+" +
+  "        </div></custom-element>
+" +
+  "      </div></custom-element>
+" +
+  "    </div>"
+`;
+
+snapshot[`should render style in place if no body in tree 1`] = `
+"<p>a</p>
+" +
+  "      <style>
+" +
+  "        html {
+" +
+  "          color: green;
+" +
+  "        }
+" +
+  "      </style>"
+`;
+
+snapshot[`should lift styles to head 1`] = `
+"<!DOCTYPE html>
+" +
+  "      <html>
+" +
+  "        <head><style>
+" +
+  "              html {
+" +
+  "                color: green;
+" +
+  "              }
+" +
+  "            </style></head>
+" +
+  "        <body>
+" +
+  "          <div>
+" +
+  "            
+" +
+  "            
+" +
+  "          </div>
+" +
+  "        <script>
+" +
+  '              console.log("hello");
+' +
+  "            </script></body>
+" +
+  "      </html>"
+`;
+
+snapshot[`should lift styles to head for sub HTMLNode 1`] = `
+"<!DOCTYPE html>
+" +
+  "      <html>
+" +
+  "        <head><style>
+" +
+  "              html {
+" +
+  "                color: green;
+" +
+  "              }
+" +
+  "            </style></head>
+" +
+  "        <body>
+" +
+  "          <div>
+" +
+  "            
+" +
+  "            
+" +
+  "          </div>
+" +
+  "        <script>
+" +
+  '              console.log("hello");
+' +
+  "            </script></body>
+" +
+  "      </html>"
+`;
+
+snapshot[`should lift styles to head and dedupe 1`] = `
+"<!DOCTYPE html>
+" +
+  "      <html>
+" +
+  "        <head><style>
+" +
+  "    html {
+" +
+  "      color: green;
+" +
+  "    }
+" +
+  "  </style></head>
+" +
+  "        <body>
+" +
+  "          <div>
+" +
+  "             
+" +
+  "            
+" +
+  "          </div>
+" +
+  "        <script>
+" +
+  '              console.log("hello");
+' +
+  "            </script></body>
+" +
+  "      </html>"
+`;
+
+snapshot[`should render scripts in place if no body in tree 1`] = `
+'<p>a</p>
+      <script>
+        console.log("hello");
+      </script>'
+`;
+
+snapshot[`should render nested scripts in place if no body in tree 1`] = `
+"<script>
+" +
+  '          console.log("a");
+' +
+  "        </script>
+" +
+  "        <script>
+" +
+  '          console.log("b");
+' +
+  "        </script>"
+`;
+
+snapshot[`should put scripts at end of body 1`] = `
+"<!DOCTYPE html>
+" +
+  "      <html>
+" +
+  "        <head><style>
+" +
+  "              html {
+" +
+  "                color: green;
+" +
+  "              }
+" +
+  "            </style></head>
+" +
+  "        <body>
+" +
+  "          <div>
+" +
+  "            
+" +
+  "            
+" +
+  "          </div>
+" +
+  "        <script>
+" +
+  '              console.log("hello");
+' +
+  "            </script></body>
+" +
+  "      </html>"
+`;
+
+snapshot[`should put scripts at end of body for sub HTMLNode 1`] = `
+"<!DOCTYPE html>
+" +
+  "      <html>
+" +
+  "        <head><style>
+" +
+  "              html {
+" +
+  "                color: green;
+" +
+  "              }
+" +
+  "            </style></head>
+" +
+  "        <body>
+" +
+  "          <div>
+" +
+  "            
+" +
+  "            
+" +
+  "          </div>
+" +
+  "        <script>
+" +
+  '              console.log("hello");
+' +
+  "            </script></body>
+" +
+  "      </html>"
+`;
+
+snapshot[`should put scripts at end of body and dedupe 1`] = `
+"<!DOCTYPE html>
+" +
+  "      <html>
+" +
+  "        <head><style>
+" +
+  "              html {
+" +
+  "                color: green;
+" +
+  "              }
+" +
+  "            </style></head>
+" +
+  "        <body>
+" +
+  "          <div>
+" +
+  "             
+" +
+  "            
+" +
+  "          </div>
+" +
+  "        <script>
+" +
+  '    console.log("hello");
+' +
+  "  </script></body>
+" +
+  "      </html>"
+`;
