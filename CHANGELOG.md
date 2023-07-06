@@ -1,5 +1,11 @@
 # html-tagged
 
+## 0.0.8
+
+### Patch Changes
+
+- ce0ad4c: update readme
+
 ## 0.0.7
 
 ### Patch Changes
