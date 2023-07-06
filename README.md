@@ -6,7 +6,8 @@ A SSR template library that expands custom elements. Inspired by
 ## Usage
 
 ```js
-import { attr, html, renderToString } from "html-tagged";
+import { attr, html } from "html-tagged";
+import { renderToString } from "html-tagged/server";
 
 const elements = {
   "my-element": ({ attrs }) =>
