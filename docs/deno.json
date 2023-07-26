@@ -1,0 +1,10 @@
+{
+  "tasks": {
+    "dev": "deno run --watch main.ts"
+  },
+  "imports": {
+    "html-tagged": "../mod.ts",
+    "html-tagged/server": "../server.ts",
+    "router-trie": "https://esm.sh/router-trie@0.0.9"
+  }
+}
